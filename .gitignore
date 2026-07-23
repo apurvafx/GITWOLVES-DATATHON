@@ -1,1 +1,3 @@
 .agents
+backend/.env
+backend/database/ksp_crime.db
