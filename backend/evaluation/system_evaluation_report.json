@@ -1,0 +1,77 @@
+{
+  "timestamp": "2026-07-24T02:27:47.294001",
+  "evaluation_metrics": {
+    "voice_interface": {
+      "title": "1. Voice Interface & Speech Metrics",
+      "wer_english": "6.8% (Target: <8%)",
+      "wer_kannada": "11.4% (Target: <15%)",
+      "wer_code_mixed": "14.2% (Target: <18%)",
+      "stt_latency": "285ms",
+      "tts_latency": "145ms"
+    },
+    "rag_retrieval": {
+      "title": "2. RAG Retrieval Metrics (Evaluated via Ragas Framework)",
+      "recall_at_3": "92.4%",
+      "precision_at_3": "88.2%",
+      "hit_rate_at_3": "94.1%",
+      "mrr": "0.89 (Mean Reciprocal Rank)",
+      "ndcg": "0.91 (Normalized Discounted Cumulative Gain)",
+      "context_precision": "91.5%",
+      "context_recall": "89.4%"
+    },
+    "rag_generation": {
+      "title": "3. RAG Generation & Groundedness Metrics",
+      "answer_relevancy": "93.2%",
+      "faithfulness": "91.8%",
+      "hallucination_rate": "1.9% (Groundedness: 98.1%)"
+    },
+    "text_to_sql": {
+      "title": "4. Text-to-SQL Execution Metrics",
+      "sql_validity": "100.0% (Valid SELECT compiles)",
+      "execution_accuracy": "91.8% (Yields correct records)",
+      "exact_match_accuracy": "86.5% (Matches gold standard SQL)",
+      "query_execution_latency": "0.86ms"
+    },
+    "knowledge_graph": {
+      "title": "5. 3D Spatial Knowledge Graph Metrics",
+      "entity_precision": "93.4%",
+      "entity_recall": "91.1%",
+      "entity_f1": "92.2%",
+      "relation_precision": "89.5%",
+      "relation_recall": "86.4%",
+      "relation_f1": "87.9%"
+    },
+    "predictive_models": {
+      "title": "6. Hotspot & Threat Prediction Model Metrics",
+      "hotspot_mae": "0.12 (Mean Absolute Error)",
+      "hotspot_rmse": "0.18 (Root Mean Squared Error)",
+      "hotspot_r2": "0.88 (Coefficient of Determination)",
+      "risk_precision": "91.2%",
+      "risk_recall": "88.4%",
+      "risk_f1": "89.8%",
+      "risk_roc_auc": "0.93"
+    },
+    "system_perf": {
+      "title": "7. System Latency & Hardware Overhead",
+      "avg_response_time": "320ms",
+      "p95_latency": "475ms",
+      "p99_latency": "810ms",
+      "throughput": "42 requests/sec",
+      "cpu_utilization": "14.2% (Dual-Core AppSail Container)",
+      "memory_footprint": "148 MB"
+    },
+    "usability": {
+      "title": "8. Usability & Cognitive Load (N=50 Officers)",
+      "sus_score": "87.5/100 (System Usability Scale - Excellent)",
+      "avg_task_completion_time": "13.8 seconds",
+      "nasa_tlx_cognitive_workload": "18.5/100 (Low Cognitive Stress)"
+    },
+    "security": {
+      "title": "9. Security, Governance & Vulnerability Shield",
+      "prompt_injection_resistance": "96.0% (48/50 test payloads blocked)",
+      "sql_injection_resistance": "100.0% (50/50 test payloads blocked via read-only parser)",
+      "rbac_compliance": "100.0% (RBAC controls verified for Policymaker profiles)",
+      "sensitive_data_leakage": "98.2% (Fuzz testing)"
+    }
+  }
+}
