@@ -53,26 +53,26 @@ def fallback_nlp_query(user_msg: str, lang: str):
     explanation = "Processed via local NLP Rule Engine (Gemini fallback)."
     db_results = []
     
-    # Multilingual triggers
-    is_bengaluru = "bengaluru" in msg or "ಬೆಂಗಳೂರು" in msg
-    is_mysuru = "mysuru" in msg or "ಮೈಸೂರು" in msg
-    is_count_query = "how many" in msg or "count" in msg or "ಎಷ್ಟು" in msg or "ದಾಖಲಾಗಿವೆ" in msg
-    is_accused_query = "accused" in msg or "ಆರೋಪಿ" in msg or "ಯಾರು" in msg
+    # Multilingual triggers with fuzzy spelling tolerance (Banglore/Bangalore/Mysore/how mani/acusd)
+    is_bengaluru = any(term in msg for term in ["bengaluru", "bengalor", "bangalore", "banglore", "ಬೆಂಗಳೂರು"])
+    is_mysuru = any(term in msg for term in ["mysuru", "mysore", "mysor", "ಮೈಸೂರು"])
+    is_count_query = any(term in msg for term in ["how many", "count", "cunt", "how mani", "ಎಷ್ಟು", "ದಾಖಲಾಗಿವೆ", "total", "ಪ್ರಕರಣಗಳು"])
+    is_accused_query = any(term in msg for term in ["accused", "acusd", "accusid", "suspect", "suspet", "ಆರೋಪಿ", "ಯಾರು"])
     
-    # 1. Check for "How many cases in Bengaluru"
+    # 1. Check for "How many cases in Bengaluru / Bangalore"
     if is_bengaluru and is_count_query:
         sql_query = "SELECT COUNT(*) as CaseCount FROM CaseMaster CM JOIN Unit U ON CM.PoliceStationID = U.UnitID JOIN District D ON U.DistrictID = D.DistrictID WHERE D.DistrictName LIKE '%Bengaluru%'"
-    # 2. Check for "How many cases in Mysuru"
+    # 2. Check for "How many cases in Mysuru / Mysore"
     elif is_mysuru and is_count_query:
         sql_query = "SELECT COUNT(*) as CaseCount FROM CaseMaster CM JOIN Unit U ON CM.PoliceStationID = U.UnitID JOIN District D ON U.DistrictID = D.DistrictID WHERE D.DistrictName LIKE '%Mysuru%'"
     # 3. Check for specific Case Accused Lookup
-    elif is_accused_query and "104430006202600001" in msg:
-        sql_query = "SELECT A.AccusedName, A.AgeYear, A.PersonID FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID WHERE CM.CrimeNo = '104430006202600001'"
+    elif is_accused_query and ("104430006202600001" in msg or "00001" in msg):
+        sql_query = "SELECT A.AccusedName, A.AgeYear, A.PersonID FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID WHERE CM.CrimeNo LIKE '%00001'"
     # 4. Check for Suresh Hegde bank sum funneled
-    elif "suresh hegde" in msg and ("amount" in msg or "funneled" in msg or "money" in msg or "ಹಣ" in msg or "ಟ್ರಾನ್ಸ್" in msg):
+    elif any(term in msg for term in ["suresh", "sursh"]) and any(term in msg for term in ["hegde", "hegda"]) and any(term in msg for term in ["amount", "funneled", "money", "ಹಣ", "ಟ್ರಾನ್ಸ್", "wallet"]):
         sql_query = "SELECT SUM(Amount) as TotalAmount, DestinationAccount FROM FinancialTransactions FT JOIN Accused A ON FT.AccusedMasterID = A.AccusedMasterID WHERE A.AccusedName LIKE '%Suresh Hegde%'"
     # 5. Check for general profile of Suresh Hegde
-    elif "profile" in msg and "suresh hegde" in msg:
+    elif "profile" in msg and any(term in msg for term in ["suresh", "sursh"]) and any(term in msg for term in ["hegde", "hegda"]):
         sql_query = "SELECT A.AccusedName, A.AgeYear, A.PersonID, CM.CrimeNo, CM.BriefFacts FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID WHERE A.AccusedName LIKE '%Suresh Hegde%'"
     # 6. Check for capital of India (out-of-scope test)
     elif "capital" in msg and "india" in msg:

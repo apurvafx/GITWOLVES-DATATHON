@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from backend.routes.auth import get_current_user
+from pydantic import BaseModel
+from typing import Optional
 import sqlite3
 import os
 
@@ -308,3 +310,58 @@ def get_case_details(case_id: int, user: dict = Depends(get_current_user)):
     
     conn.close()
     return case_dict
+
+class CaseRegisterPayload(BaseModel):
+    crime_no: str
+    case_no: str
+    crime_date: str
+    station_id: int
+    major_head_id: int
+    minor_head_id: int
+    gravity_id: int
+    status_id: int
+    court_id: int
+    lat: float
+    lng: float
+    facts: str
+    accused_name: Optional[str] = None
+    accused_age: Optional[int] = None
+    accused_role: Optional[str] = None
+
+@router.post("/register")
+def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_current_user)):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        # Insert CaseMaster record
+        cursor.execute("""
+            INSERT INTO CaseMaster (
+                CrimeNo, CaseNo, CrimeRegisteredDate, PolicePersonID, PoliceStationID, 
+                CaseCategoryID, GravityOffenceID, CrimeMajorHeadID, CrimeMinorHeadID, CaseStatusID, CourtID, 
+                IncidentFromDate, IncidentToDate, InfoReceivedPSDate, latitude, longitude, BriefFacts
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        """, (
+            payload.crime_no, payload.case_no, payload.crime_date, 1001, payload.station_id,
+            1, payload.gravity_id, payload.major_head_id, payload.minor_head_id, payload.status_id, payload.court_id,
+            payload.crime_date + " 00:00:00", payload.crime_date + " 00:00:00", payload.crime_date + " 00:00:00",
+            payload.lat, payload.lng, payload.facts
+        ))
+        case_master_id = cursor.lastrowid
+        
+        # If accused details provided, insert into Accused
+        if payload.accused_name:
+            cursor.execute("""
+                INSERT INTO Accused (CaseMasterID, AccusedName, AgeYear, GenderID, PersonID)
+                VALUES (?, ?, ?, ?, ?)
+            """, (case_master_id, payload.accused_name, payload.accused_age or 30, 1, payload.accused_role or "A1"))
+            
+        conn.commit()
+        return {"status": "success", "case_master_id": case_master_id}
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=f"Database integrity error: {str(e)}")
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+    finally:
+        conn.close()
