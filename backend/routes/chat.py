@@ -155,9 +155,9 @@ def process_chat(chat_request: ChatMessage, user: dict = Depends(get_current_use
     try:
         # Initialize LangChain ChatGoogleGenerativeAI
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash", 
+            model="gemini-3.1-flash-lite", 
             google_api_key=GEMINI_API_KEY, 
-            temperature=0.0
+            temperature=0.5
         )
         
         # SQL Query Generation Chain

@@ -11,8 +11,8 @@ def init_database():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Enable foreign keys
-    cursor.execute("PRAGMA foreign_keys = ON;")
+    # Disable foreign keys temporarily to drop tables cleanly
+    cursor.execute("PRAGMA foreign_keys = OFF;")
 
     # Drop existing tables if any (for clean initialization)
     tables = [
@@ -506,6 +506,34 @@ def init_database():
             "2026-05-19 21:30:00", "2026-05-19 22:00:00", "2026-05-20 06:00:00",
             12.3162, 76.6575, # Lashkar, Mysuru
             "Suspect attacked a shopkeeper with a sharp weapon when he resisted a robbery attempt. Suspect stole cash box containing Rs. 85,000 and fled. Accused Vikram Malhotra arrested on matching descriptions."
+        ),
+        # Case 5: Phishing Fraud in Whitefield, Bengaluru (Accused: Suresh Hegde & Arjun Mehta)
+        (
+            5, "104430006202600005", "202600005", "2026-05-25", 1001, 101, 1, 2, 3, 5, 1, 1,
+            "2026-05-24 11:00:00", "2026-05-24 13:00:00", "2026-05-25 09:30:00",
+            12.9698, 77.7499, # Whitefield
+            "A corporate executive fell victim to an executive spear-phishing attack. Rs. 2,00,000 was transferred to dummy corporate bank accounts. IP addresses traced back to a local proxy node."
+        ),
+        # Case 6: Attempted Murder in Jayanagar, Bengaluru (Accused: Rajesh Gowda & Farhan Akhtar)
+        (
+            6, "104430006202600006", "202600006", "2026-06-05", 1002, 102, 1, 1, 1, 2, 1, 1,
+            "2026-06-04 22:30:00", "2026-06-04 23:30:00", "2026-06-05 08:00:00",
+            12.9299, 77.5824, # Jayanagar
+            "Victim assaulted near Jayanagar 4th Block metro station by two gang members riding a black motorcycle. Weapon recovered at the crime scene. Rajesh Gowda and Farhan Akhtar named as primary suspects."
+        ),
+        # Case 7: Online Financial Fraud in Hebbal, Bengaluru (Accused: Arjun Mehta & Karan Johar)
+        (
+            7, "104430006202600007", "202600007", "2026-06-18", 1003, 103, 1, 2, 3, 6, 1, 1,
+            "2026-06-17 15:30:00", "2026-06-17 18:00:00", "2026-06-18 10:00:00",
+            13.0354, 77.5988, # Hebbal
+            "Complainant reported credit card details cloned and used for purchasing high-end electronics worth Rs. 1,20,000 online. Deliveries matched addresses linked to accomplice Karan Johar."
+        ),
+        # Case 8: Robbery in Gokulam, Mysuru (Accused: Vikram Malhotra & Farhan Akhtar)
+        (
+            8, "104430006202600008", "202600008", "2026-07-02", 2002, 202, 1, 1, 2, 3, 2, 2,
+            "2026-07-01 20:00:00", "2026-07-01 21:00:00", "2026-07-02 09:00:00",
+            12.3278, 76.6214, # Gokulam, Mysuru
+            "Two suspects broke into a convenience store during closing hours and stole Rs. 95,000 in cash. Fingerprints matched Vikram Malhotra, who was seen fleeing the area with Farhan Akhtar."
         )
     ]
     cursor.executemany("""
@@ -522,6 +550,10 @@ def init_database():
         (2, 2, "Shubha Murthy", 56, 3, 1, 1, 2),
         (3, 3, "Mohammed Yusuf", 42, 2, 2, 2, 1),
         (4, 4, "Venkatesh Rao", 61, 3, 1, 1, 1),
+        (5, 5, "Nisha Sharma", 29, 2, 1, 1, 1),
+        (6, 6, "Praveen Kumar", 45, 3, 1, 1, 1),
+        (7, 7, "Asha Shenoy", 38, 2, 2, 2, 1),
+        (8, 8, "Siddharth Hegde", 50, 3, 1, 1, 1),
     ]
     cursor.executemany("INSERT INTO ComplainantDetails VALUES (?, ?, ?, ?, ?, ?, ?, ?);", complainants)
 
@@ -531,21 +563,29 @@ def init_database():
         (2, 2, "Shubha Murthy", 56, 2, "0"),
         (3, 3, "Mohammed Yusuf", 42, 1, "0"),
         (4, 4, "Venkatesh Rao", 61, 1, "0"),
+        (5, 5, "Nisha Sharma", 29, 1, "0"),
+        (6, 6, "Praveen Kumar", 45, 1, "0"),
+        (7, 7, "Asha Shenoy", 38, 1, "0"),
+        (8, 8, "Siddharth Hegde", 50, 1, "0"),
     ]
     cursor.executemany("INSERT INTO Victim VALUES (?, ?, ?, ?, ?, ?);", victims)
 
-    # 22. Accused (highly linked network: Rajesh Gowda, Suresh Hegde, Vikram Malhotra)
+    # 22. Accused (highly linked network: Rajesh Gowda, Suresh Hegde, Vikram Malhotra, Arjun Mehta, Farhan Akhtar, Karan Johar)
     accused_list = [
-        # Case 1 Accused
         (1, 1, "Rajesh Gowda", 29, 1, "A1"),
-        # Case 2 Accused (Rajesh Gowda and Suresh Hegde accomplice)
         (2, 2, "Rajesh Gowda", 29, 1, "A1"),
         (3, 2, "Suresh Hegde", 31, 1, "A2"),
-        # Case 3 Accused (Suresh Hegde and Vikram Malhotra accomplice)
         (4, 3, "Suresh Hegde", 31, 1, "A1"),
         (5, 3, "Vikram Malhotra", 27, 1, "A2"),
-        # Case 4 Accused
         (6, 4, "Vikram Malhotra", 27, 1, "A1"),
+        (7, 5, "Suresh Hegde", 31, 1, "A1"),
+        (8, 5, "Arjun Mehta", 34, 1, "A2"),
+        (9, 6, "Rajesh Gowda", 29, 1, "A1"),
+        (10, 6, "Farhan Akhtar", 28, 1, "A2"),
+        (11, 7, "Arjun Mehta", 34, 1, "A1"),
+        (12, 7, "Karan Johar", 32, 1, "A2"),
+        (13, 8, "Vikram Malhotra", 27, 1, "A1"),
+        (14, 8, "Farhan Akhtar", 28, 1, "A2"),
     ]
     cursor.executemany("INSERT INTO Accused VALUES (?, ?, ?, ?, ?, ?);", accused_list)
 
@@ -558,19 +598,21 @@ def init_database():
         (3, "IT_ACT", "66D", 1, 1),
         (4, "IPC", "307", 1, 1),
         (4, "IPC", "392", 2, 2),
+        (5, "IT_ACT", "66D", 1, 1),
+        (6, "IPC", "307", 1, 1),
+        (7, "IPC", "420", 1, 1),
+        (8, "IPC", "392", 1, 1),
     ]
     cursor.executemany("INSERT INTO ActSectionAssociation VALUES (?, ?, ?, ?, ?);", associations)
 
     # 24. Arrest Details
     arrests = [
-        # Case 4 Vikram Malhotra Arrested
         (1, 4, 1, "2026-05-21", 1, 2, 202, 2002, 2, 6, 1, 0),
-        # Case 2 Suresh Hegde Arrested
         (2, 2, 1, "2026-03-05", 1, 1, 102, 1002, 1, 3, 0, 0),
     ]
     cursor.executemany("INSERT INTO ArrestSurrender VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", arrests)
 
-    # 25. Financial Transactions (Requirement 7: Money trails linking cyber fraud to bank accounts)
+    # 25. Financial Transactions (Money trails linking cyber fraud to bank accounts)
     transactions = [
         # Phishing from Case 1
         (1, 1, 1, "ACC-KIRAN-889", "ACC-MULE-772", 50000.00, "2026-02-09 14:45:00", 1),
@@ -582,6 +624,12 @@ def init_database():
         # Case 3 SIM cloning transfers
         (6, 3, 4, "ACC-VICTIM-991", "ACC-MULE-112", 200000.00, "2026-04-14 10:15:00", 1),
         (7, 3, 5, "ACC-MULE-112", "ACC-VIKRAM-442", 150000.00, "2026-04-14 12:00:00", 1),
+        # Case 5 corporate phishing transfers
+        (8, 5, 8, "ACC-VICTIM-NISH", "ACC-MULE-881", 100000.00, "2026-05-24 11:30:00", 1),
+        (9, 5, 8, "ACC-VICTIM-NISH", "ACC-MULE-881", 100000.00, "2026-05-24 11:45:00", 1),
+        # Funneling to Suresh Hegde and Arjun Mehta
+        (10, 5, 8, "ACC-MULE-881", "ACC-SURESH-901", 90000.00, "2026-05-24 12:30:00", 1),
+        (11, 5, 8, "ACC-MULE-881", "ACC-ARJUN-501", 90000.00, "2026-05-24 12:45:00", 1),
     ]
     cursor.executemany("INSERT INTO FinancialTransactions VALUES (?, ?, ?, ?, ?, ?, ?, ?);", transactions)
 
