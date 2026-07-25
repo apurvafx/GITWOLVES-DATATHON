@@ -311,7 +311,6 @@ def init_database():
     );
     """)
 
-    # Added Custom FinancialTransactions Table to satisfy Requirement 7 (Financial Crime trails)
     cursor.execute("""
     CREATE TABLE FinancialTransactions (
         TransactionID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -332,10 +331,8 @@ def init_database():
     
     # --- Populating Mock Data ---
     
-    # 1. State
     cursor.execute("INSERT INTO State VALUES (1, 'Karnataka', 1, 1);")
     
-    # 2. Districts (Karnataka specific)
     districts = [
         (1, "Bengaluru City", 1, 1),
         (2, "Mysuru City", 1, 1),
@@ -345,7 +342,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO District VALUES (?, ?, ?, ?);", districts)
     
-    # 3. Unit Types
     unit_types = [
         (1, "Commissioner Office", "City", 1, 1),
         (2, "Police Station", "District", 2, 1),
@@ -353,7 +349,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO UnitType VALUES (?, ?, ?, ?, ?);", unit_types)
     
-    # 4. Units (Police Stations in Karnataka)
     units = [
         (101, "Koramangala PS", 2, 1, 1, 1, 1, 1),
         (102, "Indiranagar PS", 2, 1, 1, 1, 1, 1),
@@ -364,7 +359,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Unit VALUES (?, ?, ?, ?, ?, ?, ?, ?);", units)
     
-    # 5. Ranks
     ranks = [
         (1, "Director General of Police (DGP)", 1, 1),
         (2, "Superintendent of Police (SP)", 5, 1),
@@ -375,7 +369,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Rank VALUES (?, ?, ?, ?);", ranks)
     
-    # 6. Designations
     designations = [
         (1, "Investigating Officer (IO)", 1, 1),
         (2, "Station House Officer (SHO)", 1, 2),
@@ -383,7 +376,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Designation VALUES (?, ?, ?, ?);", designations)
     
-    # 7. Employees (Karnataka Police Officers)
     employees = [
         (1001, 1, 101, 3, 1, "KGID-KA99102", "Manjunath", "1978-05-12", 1, "2002-08-15"),
         (1002, 1, 102, 4, 1, "KGID-KA99144", "Anitha", "1985-11-23", 2, "2010-02-10"),
@@ -393,15 +385,12 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Employee VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", employees)
     
-    # 8. Case Categories
     categories = [(1, "FIR"), (2, "UDR"), (3, "Zero FIR"), (4, "PAR")]
     cursor.executemany("INSERT INTO CaseCategory VALUES (?, ?);", categories)
     
-    # 9. Gravity Offence
     gravity = [(1, "Heinous"), (2, "Non-Heinous")]
     cursor.executemany("INSERT INTO GravityOffence VALUES (?, ?);", gravity)
     
-    # 10. Crime Heads (Major classification)
     crime_heads = [
         (1, "Crimes Against Body", 1),
         (2, "Crimes Against Property", 1),
@@ -410,7 +399,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO CrimeHead VALUES (?, ?, ?);", crime_heads)
     
-    # 11. Crime Sub Heads (Minor classification)
     crime_subheads = [
         (1, 1, "Murder", 1),
         (2, 1, "Attempt to Murder", 2),
@@ -422,7 +410,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO CrimeSubHead VALUES (?, ?, ?, ?);", crime_subheads)
     
-    # 12. Case Status Master
     status = [
         (1, "Under Investigation"),
         (2, "Charge Sheeted"),
@@ -431,7 +418,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO CaseStatusMaster VALUES (?, ?);", status)
     
-    # 13. Courts
     courts = [
         (1, "City Civil Court Bengaluru", 1, 1, 1),
         (2, "JMFC Court Mysuru", 2, 1, 1),
@@ -439,22 +425,18 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Court VALUES (?, ?, ?, ?, ?);", courts)
     
-    # 14. Castes
     castes = [(1, "General"), (2, "OBC"), (3, "SC"), (4, "ST")]
     cursor.executemany("INSERT INTO CasteMaster VALUES (?, ?);", castes)
     
-    # 15. Religions
     religions = [(1, "Hindu"), (2, "Muslim"), (3, "Christian"), (4, "Sikh")]
     cursor.executemany("INSERT INTO ReligionMaster VALUES (?, ?);", religions)
     
-    # 16. Occupations
     occupations = [
         (1, "Farmer"), (2, "Software Engineer"), (3, "Business Owner"), 
         (4, "Laborer"), (5, "Unemployed"), (6, "Student")
     ]
     cursor.executemany("INSERT INTO OccupationMaster VALUES (?, ?);", occupations)
 
-    # 17. Acts
     acts = [
         ("IPC", "Indian Penal Code", "IPC", 1),
         ("NDPS", "Narcotic Drugs and Psychotropic Substances Act", "NDPS", 1),
@@ -462,7 +444,6 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO Act VALUES (?, ?, ?, ?);", acts)
 
-    # 18. Sections
     sections = [
         ("IPC", "302", "Punishment for murder", 1),
         ("IPC", "307", "Attempt to murder", 1),
@@ -475,74 +456,65 @@ def init_database():
 
     conn.commit()
 
-    # 19. CaseMaster Records (Let's generate 4 highly connected, detailed cases)
-    # Bengaluru coordinates center around: Lat 12.9716, Long 77.5946
-    # Mysuru coordinates center around: Lat 12.2958, Long 76.6394
+    # 19. CaseMaster Records (Let's generate 8 manual and 49,992 synthetic cases = 50,000 cases total)
     cases = [
         # Case 1: Cyber Fraud in Koramangala, Bengaluru (Accused: Rajesh Gowda)
         (
             1, "104430006202600001", "202600001", "2026-02-10", 1001, 101, 1, 2, 3, 6, 1, 1,
             "2026-02-09 14:30:00", "2026-02-09 16:00:00", "2026-02-10 10:00:00",
             12.9352, 77.6244, # Koramangala
-            "The complainant stated that they received a WhatsApp message with a phishing link pretending to be from Bengaluru Electricity Supply Company (BESCOM) threatening power disconnection. Upon clicking, Rs. 1,50,000 was debited from their bank account in three transfers."
+            "The complainant stated that they received a WhatsApp message with a phishing link pretending to be from Bengaluru Electricity Supply Company (BESCOM) threatening power disconnection. Upon clicking, Rs. 1,50,000 was debited from their bank account in three transfers. [District: Bengaluru City]"
         ),
         # Case 2: House Breaking / Robbery in Indiranagar, Bengaluru (Accused: Rajesh Gowda & Suresh Hegde)
         (
             2, "104430006202600002", "202600002", "2026-03-01", 1002, 102, 1, 1, 2, 4, 1, 1,
             "2026-02-28 23:00:00", "2026-03-01 04:00:00", "2026-03-01 08:00:00",
             12.9784, 77.6408, # Indiranagar
-            "Unidentified thieves broke into the locked residence in Indiranagar by breaking the terrace door lock. They stole gold jewelry worth Rs. 5,00,000 and two laptops. Suspect vehicle captured on CCTV matched a black hatchback."
+            "Unidentified thieves broke into the locked residence in Indiranagar by breaking the terrace door lock. They stole gold jewelry worth Rs. 5,00,000 and two laptops. Suspect vehicle captured on CCTV matched a black hatchback. [District: Bengaluru City]"
         ),
         # Case 3: Cyber Fraud in Electronic City, Bengaluru (Accused: Suresh Hegde & Vikram Malhotra)
         (
             3, "104430006202600003", "202600003", "2026-04-15", 1003, 103, 1, 2, 3, 5, 1, 1,
             "2026-04-14 10:00:00", "2026-04-14 11:30:00", "2026-04-15 09:00:00",
             12.8452, 77.6632, # Electronic City
-            "Identity theft case where suspect cloned the complainant's SIM card and accessed net banking details to steal Rs. 4,00,000. Funds were funneled into multiple suspect mule bank accounts."
+            "Identity theft case where suspect cloned the complainant's SIM card and accessed net banking details to steal Rs. 4,00,000. Funds were funneled into multiple suspect mule bank accounts. [District: Bengaluru City]"
         ),
         # Case 4: Robbery/Attempted Murder in Lashkar, Mysuru (Accused: Vikram Malhotra)
         (
             4, "104430006202600004", "202600004", "2026-05-20", 2002, 202, 1, 1, 1, 2, 2, 2,
             "2026-05-19 21:30:00", "2026-05-19 22:00:00", "2026-05-20 06:00:00",
             12.3162, 76.6575, # Lashkar, Mysuru
-            "Suspect attacked a shopkeeper with a sharp weapon when he resisted a robbery attempt. Suspect stole cash box containing Rs. 85,000 and fled. Accused Vikram Malhotra arrested on matching descriptions."
+            "Suspect attacked a shopkeeper with a sharp weapon when he resisted a robbery attempt. Suspect stole cash box containing Rs. 85,000 and fled. Accused Vikram Malhotra arrested on matching descriptions. [District: Mysuru City]"
         ),
         # Case 5: Phishing Fraud in Whitefield, Bengaluru (Accused: Suresh Hegde & Arjun Mehta)
         (
             5, "104430006202600005", "202600005", "2026-05-25", 1001, 101, 1, 2, 3, 5, 1, 1,
             "2026-05-24 11:00:00", "2026-05-24 13:00:00", "2026-05-25 09:30:00",
             12.9698, 77.7499, # Whitefield
-            "A corporate executive fell victim to an executive spear-phishing attack. Rs. 2,00,000 was transferred to dummy corporate bank accounts. IP addresses traced back to a local proxy node."
+            "A corporate executive fell victim to an executive spear-phishing attack. Rs. 2,00,000 was transferred to dummy corporate bank accounts. IP addresses traced back to a local proxy node. [District: Bengaluru City]"
         ),
         # Case 6: Attempted Murder in Jayanagar, Bengaluru (Accused: Rajesh Gowda & Farhan Akhtar)
         (
             6, "104430006202600006", "202600006", "2026-06-05", 1002, 102, 1, 1, 1, 2, 1, 1,
             "2026-06-04 22:30:00", "2026-06-04 23:30:00", "2026-06-05 08:00:00",
             12.9299, 77.5824, # Jayanagar
-            "Victim assaulted near Jayanagar 4th Block metro station by two gang members riding a black motorcycle. Weapon recovered at the crime scene. Rajesh Gowda and Farhan Akhtar named as primary suspects."
+            "Victim assaulted near Jayanagar 4th Block metro station by two gang members riding a black motorcycle. Weapon recovered at the crime scene. Rajesh Gowda and Farhan Akhtar named as primary suspects. [District: Bengaluru City]"
         ),
         # Case 7: Online Financial Fraud in Hebbal, Bengaluru (Accused: Arjun Mehta & Karan Johar)
         (
             7, "104430006202600007", "202600007", "2026-06-18", 1003, 103, 1, 2, 3, 6, 1, 1,
             "2026-06-17 15:30:00", "2026-06-17 18:00:00", "2026-06-18 10:00:00",
             13.0354, 77.5988, # Hebbal
-            "Complainant reported credit card details cloned and used for purchasing high-end electronics worth Rs. 1,20,000 online. Deliveries matched addresses linked to accomplice Karan Johar."
+            "Complainant reported credit card details cloned and used for purchasing high-end electronics worth Rs. 1,20,000 online. Deliveries matched addresses linked to accomplice Karan Johar. [District: Bengaluru City]"
         ),
         # Case 8: Robbery in Gokulam, Mysuru (Accused: Vikram Malhotra & Farhan Akhtar)
         (
             8, "104430006202600008", "202600008", "2026-07-02", 2002, 202, 1, 1, 2, 3, 2, 2,
             "2026-07-01 20:00:00", "2026-07-01 21:00:00", "2026-07-02 09:00:00",
             12.3278, 76.6214, # Gokulam, Mysuru
-            "Two suspects broke into a convenience store during closing hours and stole Rs. 95,000 in cash. Fingerprints matched Vikram Malhotra, who was seen fleeing the area with Farhan Akhtar."
+            "Two suspects broke into a convenience store during closing hours and stole Rs. 95,000 in cash. Fingerprints matched Vikram Malhotra, who was seen fleeing the area with Farhan Akhtar. [District: Mysuru City]"
         )
     ]
-    cursor.executemany("""
-    INSERT INTO CaseMaster (
-        CaseMasterID, CrimeNo, CaseNo, CrimeRegisteredDate, PolicePersonID, PoliceStationID, 
-        CaseCategoryID, GravityOffenceID, CrimeMajorHeadID, CrimeMinorHeadID, CaseStatusID, CourtID, 
-        IncidentFromDate, IncidentToDate, InfoReceivedPSDate, latitude, longitude, BriefFacts
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-    """, cases)
 
     # 20. Complainants
     complainants = [
@@ -555,7 +527,6 @@ def init_database():
         (7, 7, "Asha Shenoy", 38, 2, 2, 2, 1),
         (8, 8, "Siddharth Hegde", 50, 3, 1, 1, 1),
     ]
-    cursor.executemany("INSERT INTO ComplainantDetails VALUES (?, ?, ?, ?, ?, ?, ?, ?);", complainants)
 
     # 21. Victims
     victims = [
@@ -568,9 +539,8 @@ def init_database():
         (7, 7, "Asha Shenoy", 38, 1, "0"),
         (8, 8, "Siddharth Hegde", 50, 1, "0"),
     ]
-    cursor.executemany("INSERT INTO Victim VALUES (?, ?, ?, ?, ?, ?);", victims)
 
-    # 22. Accused (highly linked network: Rajesh Gowda, Suresh Hegde, Vikram Malhotra, Arjun Mehta, Farhan Akhtar, Karan Johar)
+    # 22. Accused
     accused_list = [
         (1, 1, "Rajesh Gowda", 29, 1, "A1"),
         (2, 2, "Rajesh Gowda", 29, 1, "A1"),
@@ -587,6 +557,111 @@ def init_database():
         (13, 8, "Vikram Malhotra", 27, 1, "A1"),
         (14, 8, "Farhan Akhtar", 28, 1, "A2"),
     ]
+
+    # Dynamic synthetic case generator (reach 50,000 cases total)
+    print("Generating 49,992 synthetic case files dynamically...")
+    facts_templates = [
+        "Online banking scam. Complainant lost funds via phishing redirect link.",
+        "Theft of gold ornaments from residential building during daytime.",
+        "Physical altercation and minor injuries near local metro transit station.",
+        "Attempted robbery during night hours at convenience store. Suspect fled.",
+        "Attempt to murder over personal rivalry. Victim admitted to district hospital.",
+        "SIM card duplication fraud. Complainant reported card deactivated unexpectedly.",
+        "Credit card skimming case where duplicate card was used for online purchases.",
+        "Corporate database breach and ransomware demand. IP traced back to local node."
+    ]
+    
+    suspect_pool = [
+        "Suresh Hegde", "Rajesh Gowda", "Vikram Malhotra", "Arjun Mehta", "Farhan Akhtar",
+        "Karan Johar", "Ramesh Kumar", "Amit Sharma", "Vijay Patil", "Sunil Devadiga",
+        "Anand Rao", "Siddharth Kulkarni", "Pranav Desai", "Harish Nayak", "Chetan Reddy"
+    ]
+
+    random.seed(42)
+    accused_id_counter = 15
+
+    for i in range(9, 50001):
+        crime_no = f"1044300062026{str(i).zfill(6)}"
+        case_no = f"2026{str(i).zfill(6)}"
+        
+        days_offset = random.randint(0, 500)
+        incident_date = datetime(2025, 1, 1) + timedelta(days=days_offset)
+        date_str = incident_date.strftime("%Y-%m-%d")
+        incident_time_from = incident_date.strftime("%Y-%m-%d %H:%M:%S")
+        incident_time_to = (incident_date + timedelta(hours=2)).strftime("%Y-%m-%d %H:%M:%S")
+        received_time = (incident_date + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
+        
+        officer = random.choice([1001, 1002, 1003, 2002])
+        station = random.choice([101, 102, 103, 202])
+        
+        # Coordinates and spelling variations (Bangalore / Bengaluru)
+        if station in [101, 102, 103]:
+            # Bengaluru City (Precision coordinate box mapping >30,000 cases in Bengaluru)
+            lat = 12.9716 + random.uniform(-0.15, 0.15)
+            lng = 77.5946 + random.uniform(-0.15, 0.15)
+            facts_tag = " Bangalore City precinct incident." if random.random() > 0.5 else " Bengaluru SCRB district report."
+        else:
+            # Mysuru
+            lat = 12.2958 + random.uniform(-0.05, 0.05)
+            lng = 76.6394 + random.uniform(-0.05, 0.05)
+            facts_tag = " Mysuru City precinct incident."
+            
+        facts = random.choice(facts_templates) + facts_tag
+        gravity_id = random.choice([1, 2])
+        major_head = random.choice([1, 2, 3, 4])
+        
+        if major_head == 1: minor_head = random.choice([1, 2])
+        elif major_head == 2: minor_head = random.choice([3, 4])
+        elif major_head == 3: minor_head = random.choice([5, 6])
+        else: minor_head = 7
+        
+        status_id = random.choice([1, 2, 3, 4])
+        court_id = random.choice([1, 2, 3])
+        
+        cases.append((
+            i, crime_no, case_no, date_str, officer, station,
+            1, gravity_id, major_head, minor_head, status_id, court_id,
+            incident_time_from, incident_time_to, received_time,
+            lat, lng, facts
+        ))
+        
+        complainants.append((i, i, f"Citizen-{i}", 20 + (i % 60), 1, 1, 1, 1))
+        victims.append((i, i, f"Citizen-{i}", 20 + (i % 60), 1, "0"))
+        
+        # Accused links (about 25% of cases linked to repeat suspect pool)
+        if i % 4 == 0:
+            suspect_name = random.choice(suspect_pool)
+            suspect_age = 22 + (i % 35)
+            accused_list.append((
+                accused_id_counter, i, suspect_name, suspect_age, 1, "A1"
+            ))
+            accused_id_counter += 1
+            
+            # Double accused accomplices (5% of cases)
+            if i % 20 == 0:
+                other_suspect = random.choice([s for s in suspect_pool if s != suspect_name])
+                accused_list.append((
+                    accused_id_counter, i, other_suspect, 22 + ((i+1) % 35), 1, "A2"
+                ))
+                accused_id_counter += 1
+
+    # Bulk execute CaseMaster inserts
+    print("Writing 50,000 cases to database...")
+    cursor.executemany("""
+    INSERT INTO CaseMaster (
+        CaseMasterID, CrimeNo, CaseNo, CrimeRegisteredDate, PolicePersonID, PoliceStationID, 
+        CaseCategoryID, GravityOffenceID, CrimeMajorHeadID, CrimeMinorHeadID, CaseStatusID, CourtID, 
+        IncidentFromDate, IncidentToDate, InfoReceivedPSDate, latitude, longitude, BriefFacts
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    """, cases)
+
+    # Bulk execute Complainants and Victims
+    print("Writing complainants & victims to database...")
+    cursor.executemany("INSERT INTO ComplainantDetails VALUES (?, ?, ?, ?, ?, ?, ?, ?);", complainants)
+    cursor.executemany("INSERT INTO Victim VALUES (?, ?, ?, ?, ?, ?);", victims)
+
+    # Bulk execute Accused
+    print("Writing accused list to database...")
     cursor.executemany("INSERT INTO Accused VALUES (?, ?, ?, ?, ?, ?);", accused_list)
 
     # 23. Act-Section Associations
@@ -614,24 +689,28 @@ def init_database():
 
     # 25. Financial Transactions (Money trails linking cyber fraud to bank accounts)
     transactions = [
-        # Phishing from Case 1
         (1, 1, 1, "ACC-KIRAN-889", "ACC-MULE-772", 50000.00, "2026-02-09 14:45:00", 1),
         (2, 1, 1, "ACC-KIRAN-889", "ACC-MULE-664", 50000.00, "2026-02-09 14:50:00", 1),
         (3, 1, 1, "ACC-KIRAN-889", "ACC-MULE-112", 50000.00, "2026-02-09 15:00:00", 1),
-        # Mule accounts funneling money to Suresh Hegde's main wallet (ACC-SURESH-901)
         (4, 1, 2, "ACC-MULE-772", "ACC-SURESH-901", 45000.00, "2026-02-09 16:30:00", 1),
         (5, 1, 2, "ACC-MULE-664", "ACC-SURESH-901", 45000.00, "2026-02-09 16:35:00", 1),
-        # Case 3 SIM cloning transfers
         (6, 3, 4, "ACC-VICTIM-991", "ACC-MULE-112", 200000.00, "2026-04-14 10:15:00", 1),
         (7, 3, 5, "ACC-MULE-112", "ACC-VIKRAM-442", 150000.00, "2026-04-14 12:00:00", 1),
-        # Case 5 corporate phishing transfers
         (8, 5, 8, "ACC-VICTIM-NISH", "ACC-MULE-881", 100000.00, "2026-05-24 11:30:00", 1),
         (9, 5, 8, "ACC-VICTIM-NISH", "ACC-MULE-881", 100000.00, "2026-05-24 11:45:00", 1),
-        # Funneling to Suresh Hegde and Arjun Mehta
         (10, 5, 8, "ACC-MULE-881", "ACC-SURESH-901", 90000.00, "2026-05-24 12:30:00", 1),
         (11, 5, 8, "ACC-MULE-881", "ACC-ARJUN-501", 90000.00, "2026-05-24 12:45:00", 1),
     ]
     cursor.executemany("INSERT INTO FinancialTransactions VALUES (?, ?, ?, ?, ?, ?, ?, ?);", transactions)
+
+    # 26. Create Performance Indexes for rapid querying on 50,000 cases
+    print("Creating index structures...")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_cm_registered ON CaseMaster(CrimeRegisteredDate);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_cm_station ON CaseMaster(PoliceStationID);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_accused_case ON Accused(CaseMasterID);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_accused_name ON Accused(AccusedName);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_victim_case ON Victim(CaseMasterID);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_ft_case ON FinancialTransactions(CaseMasterID);")
 
     conn.commit()
     conn.close()
