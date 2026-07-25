@@ -3,6 +3,9 @@ import Login from "./components/Login"
 import Dashboard from "./components/Dashboard"
 import LandingPage from "./components/LandingPage"
 import Copilot from "./components/Copilot"
+import Mapper from "./components/Mapper"
+import Syndicate from "./components/Syndicate"
+import OffenderHub from "./components/OffenderHub"
 import { Shield, LayoutDashboard, MessageSquareCode, Map, Share2, Users, LogOut, Lock } from "lucide-react"
 
 // Types
@@ -132,25 +135,11 @@ export default function App() {
         <div className="flex-1 overflow-y-auto p-8">
           {activeTab === "dashboard" && <Dashboard />}
           {activeTab === "copilot" && <Copilot />}
-          {activeTab === "mapper" && <PlaceholderWorkspace name="Crime Mapper (Spatiotemporal Heatmaps)" />}
-          {activeTab === "syndicate" && <PlaceholderWorkspace name="Syndicate Link (3D Relationship Networks)" />}
-          {activeTab === "offenders" && <PlaceholderWorkspace name="Offender Hub (Habitual Suspect Profiles)" />}
+          {activeTab === "mapper" && <Mapper />}
+          {activeTab === "syndicate" && <Syndicate />}
+          {activeTab === "offenders" && <OffenderHub />}
         </div>
       </main>
-    </div>
-  )
-}
-
-// Temporary placeholder for modular pages to guarantee project compilation at this step
-function PlaceholderWorkspace({ name }: { name: string }) {
-  return (
-    <div className="h-full w-full flex flex-col items-center justify-center border border-dashed border-gray-300 bg-white rounded-xl shadow-sm p-12">
-      <div className="text-center space-y-2">
-        <h3 className="text-lg font-bold text-gray-800">{name} Workspace</h3>
-        <p className="text-sm text-gray-500 max-w-[420px]">
-          The UI components and layouts for this segment will be injected during the next compilation step.
-        </p>
-      </div>
     </div>
   )
 }
