@@ -1,3 +1,15 @@
 .agents
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ipynb_checkpoints/
 backend/.env
 backend/database/ksp_crime.db
+frontend/node_modules/
+frontend/dist/
+*.log
+.DS_Store
+Thumbs.db
