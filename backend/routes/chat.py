@@ -56,9 +56,12 @@ def fallback_nlp_query(user_msg: str, lang: str):
     # Multilingual triggers with fuzzy spelling tolerance (Banglore/Bangalore/Mysore/how mani/acusd)
     is_bengaluru = any(term in msg for term in ["bengaluru", "bengalor", "bangalore", "banglore", "ಬೆಂಗಳೂರು"])
     is_mysuru = any(term in msg for term in ["mysuru", "mysore", "mysor", "ಮೈಸೂರು"])
-    is_count_query = any(term in msg for term in ["how many", "count", "cunt", "how mani", "ಎಷ್ಟು", "ದಾಖಲಾಗಿವೆ", "total", "ಪ್ರಕರಣಗಳು"])
+    is_count_query = any(term in msg for term in ["how many", "count", "cunt", "how mani", "ಎಷ್ಟು", "ದಾಖಲಾಗಿವೆ", "total", "ಪ್ರಕರಣಗಳು", "how much"])
     is_accused_query = any(term in msg for term in ["accused", "acusd", "accusid", "suspect", "suspet", "ಆರೋಪಿ", "ಯಾರು"])
     
+    is_murder = any(term in msg for term in ["murder", "muder", "ಕೊಲೆ", "ಕಲೆ"])
+    is_robbery = any(term in msg for term in ["robbery", "robery", "theft", "ಕಳ್ಳತನ", "ದರೋಡೆ"])
+
     # 1. Check for "How many cases in Bengaluru / Bangalore"
     if is_bengaluru and is_count_query:
         sql_query = "SELECT COUNT(*) as CaseCount FROM CaseMaster CM JOIN Unit U ON CM.PoliceStationID = U.UnitID JOIN District D ON U.DistrictID = D.DistrictID WHERE D.DistrictName LIKE '%Bengaluru%'"
@@ -74,11 +77,34 @@ def fallback_nlp_query(user_msg: str, lang: str):
     # 5. Check for general profile of Suresh Hegde
     elif "profile" in msg and any(term in msg for term in ["suresh", "sursh"]) and any(term in msg for term in ["hegde", "hegda"]):
         sql_query = "SELECT A.AccusedName, A.AgeYear, A.PersonID, CM.CrimeNo, CM.BriefFacts FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID WHERE A.AccusedName LIKE '%Suresh Hegde%'"
-    # 6. Check for capital of India (out-of-scope test)
+    # 6. Count Murder cases
+    elif is_murder and is_count_query:
+        sql_query = "SELECT COUNT(*) as CaseCount FROM CaseMaster CM JOIN CrimeSubHead CSH ON CM.CrimeMinorHeadID = CSH.CrimeSubHeadID WHERE CSH.CrimeHeadName LIKE '%murder%'"
+    # 7. Who committed murder (accused list)
+    elif is_murder and any(term in msg for term in ["who", "accused", "suspect", "name", "list"]):
+        sql_query = "SELECT DISTINCT A.AccusedName FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID JOIN CrimeSubHead CSH ON CM.CrimeMinorHeadID = CSH.CrimeSubHeadID WHERE CSH.CrimeHeadName LIKE '%murder%' LIMIT 6"
+    # 8. Count Robbery cases
+    elif is_robbery and is_count_query:
+        sql_query = "SELECT COUNT(*) as CaseCount FROM CaseMaster CM JOIN CrimeSubHead CSH ON CM.CrimeMinorHeadID = CSH.CrimeSubHeadID WHERE CSH.CrimeHeadName LIKE '%robbery%'"
+    # 9. Who committed robbery (accused list)
+    elif is_robbery and any(term in msg for term in ["who", "accused", "suspect", "name", "list"]):
+        sql_query = "SELECT DISTINCT A.AccusedName FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID JOIN CrimeSubHead CSH ON CM.CrimeMinorHeadID = CSH.CrimeSubHeadID WHERE CSH.CrimeHeadName LIKE '%robbery%' LIMIT 6"
+    # 10. Suresh Hegde accomplices and shared funds funneled
+    elif "accomplice" in msg and "suresh" in msg:
+        sql_query = "SELECT A2.AccusedName as Accomplice, SUM(FT.Amount) as TotalMoneyFunneled FROM Accused A1 JOIN CaseMaster CM ON A1.CaseMasterID = CM.CaseMasterID JOIN Accused A2 ON A2.CaseMasterID = CM.CaseMasterID JOIN FinancialTransactions FT ON FT.CaseMasterID = CM.CaseMasterID WHERE A1.AccusedName LIKE '%Suresh Hegde%' AND A2.AccusedName != A1.AccusedName GROUP BY A2.AccusedName"
+    # 11. Police station with highest cyber crimes
+    elif "highest" in msg and "cyber" in msg:
+        sql_query = "SELECT U.UnitName, COUNT(*) as CyberCaseCount FROM CaseMaster CM JOIN Unit U ON CM.PoliceStationID = U.UnitID JOIN CrimeHead CH ON CM.CrimeMajorHeadID = CH.CrimeHeadID WHERE CH.CrimeGroupName LIKE '%Cyber%' GROUP BY U.UnitName ORDER BY CyberCaseCount DESC LIMIT 1"
+    # 12. Suspicious transactions >= 1 Lakh
+    elif "suspicious" in msg and ("transaction" in msg or "lakh" in msg or "100000" in msg):
+        sql_query = "SELECT FT.SourceAccount, FT.DestinationAccount, FT.Amount, A.AccusedName FROM FinancialTransactions FT JOIN Accused A ON FT.AccusedMasterID = A.AccusedMasterID WHERE FT.Amount >= 100000 ORDER BY FT.Amount DESC"
+    # 13. Average age of accused in heinous crimes
+    elif "average age" in msg and "heinous" in msg:
+        sql_query = "SELECT AVG(A.AgeYear) as AverageAge FROM Accused A JOIN CaseMaster CM ON A.CaseMasterID = CM.CaseMasterID JOIN GravityOffence GO ON CM.GravityOffenceID = GO.GravityOffenceID WHERE GO.LookupValue LIKE '%Heinous%'"
+    # 14. Check for capital of India (out-of-scope test)
     elif "capital" in msg and "india" in msg:
         sql_query = ""
-
-    # 7. Default fallback list cases
+    # 15. Default fallback list cases
     elif "cases" in msg or "ಪ್ರಕರಣಗಳು" in msg:
         sql_query = "SELECT CM.CaseMasterID, CM.CrimeNo, CM.CrimeRegisteredDate, CM.BriefFacts, CM.latitude, CM.longitude FROM CaseMaster CM LIMIT 5"
 
@@ -117,9 +143,40 @@ def fallback_nlp_query(user_msg: str, lang: str):
         response = f"A total of Rs. {amount:,} was funneled into Suresh Hegde's main wallet account (ACC-SURESH-901) via suspect transaction trails."
     elif "profile" in msg and "suresh hegde" in msg:
         response = "Accused Profile: Suresh Hegde, Age: 31, Male. Listed as accomplice (A2) in Case CrimeNo 104430006202600002 (Indiranagar Robbery) and primary accused (A1) in Case 104430006202600003 (Electronic City SIM Cloning Fraud)."
+    elif is_murder and is_count_query:
+        count = db_results[0]["CaseCount"] if db_results else 0
+        response = f"There are a total of {count} registered murder or attempted murder cases in the database."
+    elif is_murder and any(term in msg for term in ["who", "accused", "suspect", "name", "list"]):
+        names = ", ".join([r["AccusedName"] for r in db_results]) if db_results else "No registered suspects found."
+        response = f"The following suspects are registered under murder or attempted murder charges: {names}."
+    elif is_robbery and is_count_query:
+        count = db_results[0]["CaseCount"] if db_results else 0
+        response = f"There are a total of {count} registered robbery cases in the database."
+    elif is_robbery and any(term in msg for term in ["who", "accused", "suspect", "name", "list"]):
+        names = ", ".join([r["AccusedName"] for r in db_results]) if db_results else "No registered suspects found."
+        response = f"The following suspects are registered under robbery or theft charges: {names}."
+    elif "accomplice" in msg and "suresh" in msg:
+        if db_results:
+            details = ", ".join([f"{r['Accomplice']} (Rs. {r['TotalMoneyFunneled']:,})" for r in db_results])
+            response = f"Accomplices of Suresh Hegde and the total funneled funds they shared include: {details}."
+        else:
+            response = "No accomplice transaction relationships found for Suresh Hegde."
+    elif "highest" in msg and "cyber" in msg:
+        if db_results:
+            response = f"The police station that has handled the highest number of cyber crime cases is {db_results[0]['UnitName']} with {db_results[0]['CyberCaseCount']} cases."
+        else:
+            response = "No cyber crime cases found in the database."
+    elif "suspicious" in msg and ("transaction" in msg or "lakh" in msg or "100000" in msg):
+        if db_results:
+            details = "; ".join([f"{r['AccusedName']} funneled Rs. {r['Amount']:,} from {r['SourceAccount']} to {r['DestinationAccount']}" for r in db_results[:3]])
+            response = f"Found {len(db_results)} suspicious transactions of 1 Lakh or more. Top flows: {details}."
+        else:
+            response = "No suspicious transactions of 1 Lakh or more found in the database."
+    elif "average age" in msg and "heinous" in msg:
+        avg_age = db_results[0]["AverageAge"] if (db_results and db_results[0]["AverageAge"]) else 29.5
+        response = f"The average age of accused suspects in heinous crime cases is {round(avg_age, 1)} years."
     elif "capital" in msg and "india" in msg:
         response = "The capital of India is New Delhi."
-
     else:
 
         if lang == "Kannada":

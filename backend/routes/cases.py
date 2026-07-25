@@ -77,33 +77,46 @@ def get_map_coordinates(user: dict = Depends(get_current_user)):
 def get_network_graph(user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # 1. Fetch Accused
-    cursor.execute("""
-        SELECT AccusedMasterID, AccusedName, CaseMasterID, PersonID 
-        FROM Accused
-    """)
-    accused_rows = cursor.fetchall()
-    
-    # 2. Fetch Victims
-    cursor.execute("""
-        SELECT VictimMasterID, VictimName, CaseMasterID 
-        FROM Victim
-    """)
-    victim_rows = cursor.fetchall()
-    
-    # 3. Fetch Cases (for links)
+    # 1. Fetch latest 40 cases that have accused suspects to keep R3F viewport responsive
     cursor.execute("""
         SELECT CaseMasterID, CrimeNo, CrimeRegisteredDate 
         FROM CaseMaster
+        WHERE CaseMasterID IN (SELECT DISTINCT CaseMasterID FROM Accused)
+        ORDER BY CrimeRegisteredDate DESC
+        LIMIT 40
     """)
     case_rows = cursor.fetchall()
+    case_ids = [row["CaseMasterID"] for row in case_rows]
     
-    # 4. Fetch Financial Transactions to show money flow trails
-    cursor.execute("""
+    if not case_ids:
+        case_ids = [1, 2, 3, 4, 5, 6, 7, 8]
+        cursor.execute(f"SELECT CaseMasterID, CrimeNo, CrimeRegisteredDate FROM CaseMaster WHERE CaseMasterID IN ({','.join(['?']*len(case_ids))})", case_ids)
+        case_rows = cursor.fetchall()
+        
+    placeholders = ",".join(["?"] * len(case_ids))
+    
+    # 2. Fetch Accused linked to these cases
+    cursor.execute(f"""
+        SELECT AccusedMasterID, AccusedName, CaseMasterID, PersonID 
+        FROM Accused
+        WHERE CaseMasterID IN ({placeholders})
+    """, case_ids)
+    accused_rows = cursor.fetchall()
+    
+    # 3. Fetch Victims linked to these cases
+    cursor.execute(f"""
+        SELECT VictimMasterID, VictimName, CaseMasterID 
+        FROM Victim
+        WHERE CaseMasterID IN ({placeholders})
+    """, case_ids)
+    victim_rows = cursor.fetchall()
+    
+    # 4. Fetch Financial Transactions linked to these cases
+    cursor.execute(f"""
         SELECT TransactionID, CaseMasterID, SourceAccount, DestinationAccount, Amount 
         FROM FinancialTransactions
-    """)
+        WHERE CaseMasterID IN ({placeholders})
+    """, case_ids)
     tx_rows = cursor.fetchall()
     
     conn.close()

@@ -333,12 +333,20 @@ def init_database():
     
     cursor.execute("INSERT INTO State VALUES (1, 'Karnataka', 1, 1);")
     
+    # Expanded to 12 major districts of Karnataka (Requirement 5)
     districts = [
         (1, "Bengaluru City", 1, 1),
         (2, "Mysuru City", 1, 1),
         (3, "Hubballi-Dharwad City", 1, 1),
         (4, "Mangaluru City", 1, 1),
         (5, "Belagavi", 1, 1),
+        (6, "Udupi", 1, 1),
+        (7, "Shivamogga", 1, 1),
+        (8, "Kalaburagi", 1, 1),
+        (9, "Davanagere", 1, 1),
+        (10, "Tumakuru", 1, 1),
+        (11, "Vijayapura", 1, 1),
+        (12, "Ballari", 1, 1),
     ]
     cursor.executemany("INSERT INTO District VALUES (?, ?, ?, ?);", districts)
     
@@ -349,6 +357,7 @@ def init_database():
     ]
     cursor.executemany("INSERT INTO UnitType VALUES (?, ?, ?, ?, ?);", unit_types)
     
+    # Expanded units to represent every one of the 12 districts
     units = [
         (101, "Koramangala PS", 2, 1, 1, 1, 1, 1),
         (102, "Indiranagar PS", 2, 1, 1, 1, 1, 1),
@@ -356,6 +365,15 @@ def init_database():
         (201, "Devaraja PS", 2, 1, 1, 1, 2, 1),
         (202, "Lashkar PS", 2, 1, 1, 1, 2, 1),
         (301, "Suburban PS Hubballi", 2, 1, 1, 1, 3, 1),
+        (401, "Kadri PS", 2, 1, 1, 1, 4, 1),
+        (501, "Belagavi Town PS", 2, 1, 1, 1, 5, 1),
+        (601, "Udupi Town PS", 2, 1, 1, 1, 6, 1),
+        (701, "Jayanagar PS Shimoga", 2, 1, 1, 1, 7, 1),
+        (801, "Kalaburagi Town PS", 2, 1, 1, 1, 8, 1),
+        (901, "Davanagere Town PS", 2, 1, 1, 1, 9, 1),
+        (1001, "Tumakuru Town PS", 2, 1, 1, 1, 10, 1),
+        (1101, "Vijayapura Town PS", 2, 1, 1, 1, 11, 1),
+        (1201, "Ballari Town PS", 2, 1, 1, 1, 12, 1),
     ]
     cursor.executemany("INSERT INTO Unit VALUES (?, ?, ?, ?, ?, ?, ?, ?);", units)
     
@@ -558,8 +576,8 @@ def init_database():
         (14, 8, "Farhan Akhtar", 28, 1, "A2"),
     ]
 
-    # Dynamic synthetic case generator (reach 50,000 cases total)
-    print("Generating 49,992 synthetic case files dynamically...")
+    # Dynamic synthetic case generator (reach 5,000 cases total)
+    print("Generating 4,992 synthetic case files dynamically...")
     facts_templates = [
         "Online banking scam. Complainant lost funds via phishing redirect link.",
         "Theft of gold ornaments from residential building during daytime.",
@@ -577,10 +595,42 @@ def init_database():
         "Anand Rao", "Siddharth Kulkarni", "Pranav Desai", "Harish Nayak", "Chetan Reddy"
     ]
 
+    first_names = [
+        "Rajesh", "Suresh", "Vikram", "Arjun", "Farhan", "Karan", "Ramesh", "Amit", "Vijay", "Sunil",
+        "Anand", "Siddharth", "Pranav", "Harish", "Chetan", "Sandip", "Prakash", "Girish", "Manjunath", "Raghu",
+        "Shivaji", "Bheem", "Ganesh", "Mahesh", "Naveen", "Pramod", "Kiran", "Karthik", "Sanjay", "Vinay",
+        "Lokesh", "Deepak", "Sharath", "Abhishek", "Manoj", "Pradeep", "Raghav", "Satish", "Mohan", "Umesh"
+    ]
+    last_names = [
+        "Hegde", "Gowda", "Malhotra", "Mehta", "Akhtar", "Johar", "Kumar", "Sharma", "Patil", "Devadiga",
+        "Rao", "Kulkarni", "Desai", "Nayak", "Reddy", "Shetty", "Bhat", "Joshi", "Naidu", "Prasad",
+        "Sawant", "Pawar", "Shinde", "More", "Kadam", "Jadhav", "Menezes", "D'Souza", "Pinto", "Fernandes",
+        "Acharya", "Shenoy", "Kamath", "Pai", "Mallya", "Venkatesh", "Krishnan", "Iyer", "Nair", "Pillai"
+    ]
+
+    # Map station IDs to coordinate centers for clustering (All 12 major districts)
+    station_centers = {
+        101: (12.9352, 77.6244, "Bengaluru City"), # Koramangala
+        102: (12.9784, 77.6408, "Bengaluru City"), # Indiranagar
+        103: (12.8452, 77.6632, "Bengaluru City"), # Electronic City
+        201: (12.3022, 76.6492, "Mysuru City"),
+        202: (12.3162, 76.6575, "Mysuru City"),
+        301: (15.3647, 75.1240, "Hubballi-Dharwad City"),
+        401: (12.9141, 74.8560, "Mangaluru City"),
+        501: (15.8497, 74.4977, "Belagavi"),
+        601: (13.3409, 74.7421, "Udupi"),
+        701: (13.9299, 75.5681, "Shivamogga"),
+        801: (17.3297, 76.8343, "Kalaburagi"),
+        901: (14.4644, 75.9218, "Davanagere"),
+        1001: (13.3392, 77.1011, "Tumakuru"),
+        1101: (16.8302, 75.7100, "Vijayapura"),
+        1201: (15.1394, 76.9214, "Ballari")
+    }
+
     random.seed(42)
     accused_id_counter = 15
 
-    for i in range(9, 50001):
+    for i in range(9, 5001):
         crime_no = f"1044300062026{str(i).zfill(6)}"
         case_no = f"2026{str(i).zfill(6)}"
         
@@ -592,19 +642,18 @@ def init_database():
         received_time = (incident_date + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S")
         
         officer = random.choice([1001, 1002, 1003, 2002])
-        station = random.choice([101, 102, 103, 202])
+        station = random.choice(list(station_centers.keys()))
         
-        # Coordinates and spelling variations (Bangalore / Bengaluru)
-        if station in [101, 102, 103]:
-            # Bengaluru City (Precision coordinate box mapping >30,000 cases in Bengaluru)
-            lat = 12.9716 + random.uniform(-0.15, 0.15)
-            lng = 77.5946 + random.uniform(-0.15, 0.15)
+        # Coordinate clustering around designated station centers
+        lat_c, lng_c, dist_name = station_centers[station]
+        lat = lat_c + random.uniform(-0.06, 0.06)
+        lng = lng_c + random.uniform(-0.06, 0.06)
+        
+        # Spelling variations (Bangalore / Bengaluru)
+        if dist_name == "Bengaluru City":
             facts_tag = " Bangalore City precinct incident." if random.random() > 0.5 else " Bengaluru SCRB district report."
         else:
-            # Mysuru
-            lat = 12.2958 + random.uniform(-0.05, 0.05)
-            lng = 76.6394 + random.uniform(-0.05, 0.05)
-            facts_tag = " Mysuru City precinct incident."
+            facts_tag = f" {dist_name} precinct incident."
             
         facts = random.choice(facts_templates) + facts_tag
         gravity_id = random.choice([1, 2])
@@ -630,7 +679,10 @@ def init_database():
         
         # Accused links (about 25% of cases linked to repeat suspect pool)
         if i % 4 == 0:
-            suspect_name = random.choice(suspect_pool)
+            if i % 12 == 0:
+                suspect_name = random.choice(suspect_pool)
+            else:
+                suspect_name = f"{random.choice(first_names)} {random.choice(last_names)}"
             suspect_age = 22 + (i % 35)
             accused_list.append((
                 accused_id_counter, i, suspect_name, suspect_age, 1, "A1"
@@ -639,7 +691,10 @@ def init_database():
             
             # Double accused accomplices (5% of cases)
             if i % 20 == 0:
-                other_suspect = random.choice([s for s in suspect_pool if s != suspect_name])
+                if i % 60 == 0:
+                    other_suspect = random.choice([s for s in suspect_pool if s != suspect_name])
+                else:
+                    other_suspect = f"{random.choice(first_names)} {random.choice(last_names)}"
                 accused_list.append((
                     accused_id_counter, i, other_suspect, 22 + ((i+1) % 35), 1, "A2"
                 ))

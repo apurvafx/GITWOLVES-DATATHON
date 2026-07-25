@@ -64,7 +64,7 @@ export default function Mapper() {
     if (selectedCategory !== "All Categories") {
       result = result.filter(c => c.CrimeGroupName === selectedCategory)
     }
-    setFilteredCases(result)
+    setFilteredCases(result.slice(0, 1000))
   }, [selectedDistrict, selectedCategory, cases])
 
   if (loading) {
@@ -92,11 +92,12 @@ export default function Mapper() {
   const categories = ["All Categories", ...Array.from(new Set(cases.map(c => c.CrimeGroupName)))]
 
   // Color helper based on crime group name
-  const getMarkerColor = (crimeGroup: string) => {
-    const group = crimeGroup.toLowerCase()
-    if (group.includes("cyber") || group.includes("cloning")) return "#3B82F6" // blue
-    if (group.includes("robbery") || group.includes("theft")) return "#F59E0B" // amber
-    if (group.includes("murder") || group.includes("homicide")) return "#EF4444" // red
+  const getMarkerColor = (crimeGroup: string, crimeHead: string) => {
+    const group = (crimeGroup || "").toLowerCase()
+    const head = (crimeHead || "").toLowerCase()
+    if (group.includes("cyber") || head.includes("phishing") || head.includes("online")) return "#3B82F6" // blue
+    if (group.includes("property") || head.includes("robbery") || head.includes("theft") || head.includes("breaking")) return "#F59E0B" // amber
+    if (group.includes("body") || head.includes("murder") || head.includes("homicide")) return "#EF4444" // red
     return "#10B981" // emerald
   }
 
@@ -184,7 +185,7 @@ export default function Mapper() {
 
           {/* Render Case Markers */}
           {filteredCases.map((c) => {
-            const markerColor = getMarkerColor(c.CrimeGroupName)
+            const markerColor = getMarkerColor(c.CrimeGroupName, c.CrimeHeadName)
             return (
               <div key={c.CaseMasterID}>
                 {/* 1. Clean Circle Marker Node */}
