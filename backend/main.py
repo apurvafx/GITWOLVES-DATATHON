@@ -1,3 +1,14 @@
+import sys
+import os
+import types
+
+# Define a virtual 'backend' module so imports like 'from backend.routes import ...' work
+# even when the app is deployed in AppSail where the 'backend' folder is the root directory.
+if os.path.exists("main.py") and not os.path.exists("backend"):
+    backend = types.ModuleType("backend")
+    backend.__path__ = [os.path.abspath(".")]
+    sys.modules["backend"] = backend
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routes import auth, cases, chat
