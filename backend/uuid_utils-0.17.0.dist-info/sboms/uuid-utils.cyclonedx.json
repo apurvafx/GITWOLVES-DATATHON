@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:4cb5ff97-2334-4a94-913f-7f5b02145221",
+  "serialNumber": "urn:uuid:59ea3767-e310-4313-bf55-94979f80372b",
   "metadata": {
-    "timestamp": "2026-07-09T13:09:44.582946600Z",
+    "timestamp": "2026-07-09T13:02:54.220185898Z",
     "tools": [
       {
         "vendor": "CycloneDX",
@@ -14,7 +14,7 @@
     ],
     "component": {
       "type": "library",
-      "bom-ref": "path+file:///D:/a/uuid-utils/uuid-utils#0.17.0",
+      "bom-ref": "path+file:///home/runner/work/uuid-utils/uuid-utils#0.17.0",
       "name": "uuid-utils",
       "version": "0.17.0",
       "scope": "required",
@@ -22,7 +22,7 @@
       "components": [
         {
           "type": "library",
-          "bom-ref": "path+file:///D:/a/uuid-utils/uuid-utils#0.17.0 bin-target-0",
+          "bom-ref": "path+file:///home/runner/work/uuid-utils/uuid-utils#0.17.0 bin-target-0",
           "name": "uuid_utils",
           "version": "0.17.0",
           "purl": "pkg:cargo/uuid-utils@0.17.0?download_url=file://.#src/lib.rs"
@@ -61,6 +61,72 @@
         {
           "type": "vcs",
           "url": "https://github.com/Amanieu/atomic-rs"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1",
+      "author": "Josh Stone <cuviper@gmail.com>",
+      "name": "autocfg",
+      "version": "1.5.1",
+      "description": "Automatic cfg for Rust compiler features",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0 OR MIT"
+        }
+      ],
+      "purl": "pkg:cargo/autocfg@1.5.1",
+      "externalReferences": [
+        {
+          "type": "documentation",
+          "url": "https://docs.rs/autocfg/"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/cuviper/autocfg"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.0",
+      "author": "The Rust Project Developers",
+      "name": "bitflags",
+      "version": "2.13.0",
+      "description": "A macro to generate structures which behave like bitflags. ",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "b4388bee8683e3d04af747c73422af53102d2bd24d9eadb6cbc100baef4b43f8"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT OR Apache-2.0"
+        }
+      ],
+      "purl": "pkg:cargo/bitflags@2.13.0",
+      "externalReferences": [
+        {
+          "type": "documentation",
+          "url": "https://docs.rs/bitflags"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/bitflags/bitflags"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/bitflags/bitflags"
         }
       ]
     },
@@ -146,6 +212,41 @@
         {
           "type": "vcs",
           "url": "https://github.com/rust-lang/cfg-if"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#cfg_aliases@0.2.1",
+      "author": "Zicklag <zicklag@katharostech.com>",
+      "name": "cfg_aliases",
+      "version": "0.2.1",
+      "description": "A tiny utility to help save you a lot of effort with long winded `#[cfg()]` checks.",
+      "scope": "excluded",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "purl": "pkg:cargo/cfg_aliases@0.2.1",
+      "externalReferences": [
+        {
+          "type": "documentation",
+          "url": "https://docs.rs/cfg_aliases"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/katharostech/cfg_aliases"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/katharostech/cfg_aliases"
         }
       ]
     },
@@ -443,6 +544,60 @@
         {
           "type": "vcs",
           "url": "https://github.com/RustCrypto/hashes"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1",
+      "author": "Gilad Naaman <gilad.naaman@gmail.com>",
+      "name": "memoffset",
+      "version": "0.9.1",
+      "description": "offset_of functionality for Rust structs.",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "488016bfae457b036d996092f6cb448677611ce4449e970ceaf42695203f218a"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "purl": "pkg:cargo/memoffset@0.9.1",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/Gilnaa/memoffset"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#nix@0.29.0",
+      "author": "The nix-rust Project Developers",
+      "name": "nix",
+      "version": "0.29.0",
+      "description": "Rust friendly bindings to *nix APIs",
+      "scope": "required",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "71e2746dc3a24dd78b3cfcb7be93368c6de9963d30f43a6a73998a9cf4b17b46"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "MIT"
+        }
+      ],
+      "purl": "pkg:cargo/nix@0.29.0",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/nix-rust/nix"
         }
       ]
     },
@@ -991,42 +1146,11 @@
           "url": "https://github.com/SergioBenitez/version_check"
         }
       ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "registry+https://github.com/rust-lang/crates.io-index#winapi@0.3.9",
-      "author": "Peter Atashian <retep998@gmail.com>",
-      "name": "winapi",
-      "version": "0.3.9",
-      "description": "Raw FFI bindings for all of Windows API.",
-      "scope": "required",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
-        }
-      ],
-      "licenses": [
-        {
-          "expression": "MIT OR Apache-2.0"
-        }
-      ],
-      "purl": "pkg:cargo/winapi@0.3.9",
-      "externalReferences": [
-        {
-          "type": "documentation",
-          "url": "https://docs.rs/winapi/"
-        },
-        {
-          "type": "vcs",
-          "url": "https://github.com/retep998/winapi-rs"
-        }
-      ]
     }
   ],
   "dependencies": [
     {
-      "ref": "path+file:///D:/a/uuid-utils/uuid-utils#0.17.0",
+      "ref": "path+file:///home/runner/work/uuid-utils/uuid-utils#0.17.0",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#mac_address@1.1.8",
         "registry+https://github.com/rust-lang/crates.io-index#pyo3@0.29.0",
@@ -1041,6 +1165,12 @@
       ]
     },
     {
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1"
+    },
+    {
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.0"
+    },
+    {
       "ref": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7"
@@ -1051,6 +1181,9 @@
     },
     {
       "ref": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4"
+    },
+    {
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#cfg_aliases@0.2.1"
     },
     {
       "ref": "registry+https://github.com/rust-lang/crates.io-index#chacha20@0.10.0",
@@ -1088,6 +1221,7 @@
       "ref": "registry+https://github.com/rust-lang/crates.io-index#getrandom@0.4.2",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+        "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.186",
         "registry+https://github.com/rust-lang/crates.io-index#rand_core@0.10.1"
       ]
     },
@@ -1100,7 +1234,7 @@
     {
       "ref": "registry+https://github.com/rust-lang/crates.io-index#mac_address@1.1.8",
       "dependsOn": [
-        "registry+https://github.com/rust-lang/crates.io-index#winapi@0.3.9"
+        "registry+https://github.com/rust-lang/crates.io-index#nix@0.29.0"
       ]
     },
     {
@@ -1108,6 +1242,22 @@
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
         "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7"
+      ]
+    },
+    {
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1",
+      "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1"
+      ]
+    },
+    {
+      "ref": "registry+https://github.com/rust-lang/crates.io-index#nix@0.29.0",
+      "dependsOn": [
+        "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.0",
+        "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+        "registry+https://github.com/rust-lang/crates.io-index#cfg_aliases@0.2.1",
+        "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.186",
+        "registry+https://github.com/rust-lang/crates.io-index#memoffset@0.9.1"
       ]
     },
     {
@@ -1209,9 +1359,6 @@
     },
     {
       "ref": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5"
-    },
-    {
-      "ref": "registry+https://github.com/rust-lang/crates.io-index#winapi@0.3.9"
     }
   ]
 }

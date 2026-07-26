@@ -1,4 +1,4 @@
-google/_upb/_message.pyd,sha256=ATXzx9Mo55te5Gi7BNksXJoF-S_38HbkFiGCLyT97AU,728649
+google/_upb/_message.abi3.so,sha256=aFx2Vn3O90PppAS8IBWYwxwKIQE-yeLkAvpHCRsR5lA,406232
 google/protobuf/__init__.py,sha256=U1y5wbwCiLdTQxlsTEQnO1rMrpBYYuC_Rp9boFiTiZc,346
 google/protobuf/any.py,sha256=37npo8IyL1i9heh7Dxih_RKQE2BKFuv7m9NXbWxoSdo,1319
 google/protobuf/any_pb2.py,sha256=oHwjfmyuvynMflwBDMY7WJWYR6w92hz1-94CsyEqXd8,1725
@@ -58,4 +58,4 @@ protobuf-7.35.1.dist-info/LICENSE,sha256=bl4RcySv2UTc9n82zzKYQ7wakiKajNm7Vz16gxM
 protobuf-7.35.1.dist-info/METADATA,sha256=HFjP16zYBcCHzrHxTCfNujxS0HTh17BdrPMf30E8Cow,595
 protobuf-7.35.1.dist-info/RECORD,,
 protobuf-7.35.1.dist-info/REQUESTED,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
-protobuf-7.35.1.dist-info/WHEEL,sha256=MNGKiqVzcEm_R-x4M_B59ZGraKmu9XeiF3PVWlldfs4,100
+protobuf-7.35.1.dist-info/WHEEL,sha256=98do8zD3W6htwxof8j0ISguiDYyCM1uSy70ypr4PEls,111

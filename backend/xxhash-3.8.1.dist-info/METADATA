@@ -258,10 +258,10 @@ so we can avoid allocating XXH32/64 state on heap:
     In [1]: import xxhash
 
     In [2]: %timeit xxhash.xxh64_hexdigest(b'xxhash')
-    268 ns Â± 24.1 ns per loop (mean Â± std. dev. of 7 runs, 1000000 loops each)
+    268 ns ± 24.1 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
 
     In [3]: %timeit xxhash.xxh64(b'xxhash').hexdigest()
-    416 ns Â± 17.3 ns per loop (mean Â± std. dev. of 7 runs, 1000000 loops each)
+    416 ns ± 17.3 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
 
 
 XXH3 hashes are available since v2.0.0 (xxHash v0.8.0), they are:

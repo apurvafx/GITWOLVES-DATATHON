@@ -77,7 +77,7 @@ if os.path.exists(dist_path):
 
 if __name__ == "__main__":
     import uvicorn
-    # Bind to PORT environment variable assigned by AppSail
-    port = int(os.environ.get("PORT", 8000))
+    # Bind to X_ZOHO_CATALYST_LISTEN_PORT (AppSail) or PORT or default 9000
+    port = int(os.environ.get("X_ZOHO_CATALYST_LISTEN_PORT", os.environ.get("PORT", 9000)))
     module_name = "main:app" if os.path.exists("main.py") else "backend.main:app"
     uvicorn.run(module_name, host="0.0.0.0", port=port, reload=False)
