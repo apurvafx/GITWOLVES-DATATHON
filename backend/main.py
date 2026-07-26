@@ -46,7 +46,9 @@ from fastapi.responses import FileResponse, JSONResponse
 import os
 
 # Serve React build (dist directory) static assets and SPA routes
-dist_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "dist")
+prod_dist = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "dist")
+local_dist = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend", "dist")
+dist_path = prod_dist if os.path.exists(prod_dist) else local_dist
 
 @app.exception_handler(404)
 async def custom_404_handler(request, exc):
@@ -66,4 +68,5 @@ if __name__ == "__main__":
     import uvicorn
     # Bind to PORT environment variable assigned by AppSail
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=port, reload=True)
+    module_name = "main:app" if os.path.exists("main.py") else "backend.main:app"
+    uvicorn.run(module_name, host="0.0.0.0", port=port, reload=False)

@@ -1,0 +1,8 @@
+{
+  "appsail": [
+    {
+      "name": "ksp-crimepilot",
+      "source": "backend"
+    }
+  ]
+}
