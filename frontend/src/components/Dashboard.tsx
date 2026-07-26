@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Shield, AlertTriangle, BadgePercent, Calendar, MapPin, Landmark, Upload, Loader2, Sparkles, X } from "lucide-react"
+import { Shield, AlertTriangle, BadgePercent, Calendar, MapPin, Landmark, Upload, Loader2, Sparkles, X, FileText, Lock } from "lucide-react"
 
 interface Case {
   CaseMasterID: number
@@ -31,6 +31,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [refreshTrigger, setRefreshTrigger] = useState(0)
+  
+  // Case Dossier Modal states
+  const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null)
+  const [detailedCase, setDetailedCase] = useState<any | null>(null)
+  const [loadingCaseDetails, setLoadingCaseDetails] = useState(false)
 
   // Registration modal states
   const [showRegisterModal, setShowRegisterModal] = useState(false)
@@ -56,6 +61,117 @@ export default function Dashboard() {
     accused_role: "A1"
   })
 
+  const handleExportFir = (c: Case) => {
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) return
+
+    const dateStr = new Date().toLocaleString()
+
+    const htmlContent = `
+      <html>
+      <head>
+        <title>KSP Official FIR - Crime No: ${c.CrimeNo}</title>
+        <style>
+          body { font-family: 'Times New Roman', Times, serif; padding: 40px; color: #0F172A; background-color: #FFFFFF; font-size: 14px; line-height: 1.5; }
+          .header-table { width: 100%; border-bottom: 2px double #000; padding-bottom: 10px; margin-bottom: 20px; }
+          .logo-container { width: 80px; text-align: center; }
+          .crest-text { text-align: center; font-weight: bold; }
+          .crest-title { font-size: 20px; text-transform: uppercase; letter-spacing: 1px; color: #0F172A; }
+          .crest-sub { font-size: 14px; margin-top: 5px; }
+          
+          .document-title { text-align: center; font-size: 18px; font-weight: bold; text-transform: uppercase; margin: 20px 0; border: 1px solid #000; padding: 6px; background-color: #F8FAFC; }
+          
+          .info-section { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          .info-section th, .info-section td { border: 1px solid #CBD5E1; padding: 8px; text-align: left; vertical-align: top; }
+          .info-section th { background-color: #F1F5F9; font-weight: bold; width: 30%; }
+          
+          .facts-box { border: 1px solid #000; padding: 15px; background-color: #FAFAFA; min-height: 120px; font-style: italic; margin-top: 10px; }
+          
+          .footer-section { margin-top: 60px; width: 100%; }
+          .signature-box { float: right; width: 250px; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-weight: bold; }
+          
+          @media print {
+            body { padding: 20px; }
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <table class="header-table">
+          <tr>
+            <td class="logo-container" style="font-size: 40px;">🦁</td>
+            <td class="crest-text">
+              <div class="crest-title">Government of Karnataka</div>
+              <div class="crest-title" style="font-size: 16px;">Karnataka State Police Department</div>
+              <div class="crest-sub">FIRST INFORMATION REPORT (Under Section 154 Cr.P.C.)</div>
+            </td>
+            <td class="logo-container" style="font-size: 11px; text-align: right; color: #64748B; font-weight: bold; line-height: 1.4;">
+              CONFIDENTIAL<br/>KSP-PORTAL
+            </td>
+          </tr>
+        </table>
+
+        <div class="document-title">First Information Report (F.I.R.)</div>
+
+        <table class="info-section">
+          <tr>
+            <th>1. District / Unit</th>
+            <td>${c.DistrictName} District / ${c.UnitName} Station</td>
+          </tr>
+          <tr>
+            <th>2. F.I.R. Number</th>
+            <td><strong>${c.CrimeNo}</strong></td>
+          </tr>
+          <tr>
+            <th>3. Registration Date</th>
+            <td>${c.CrimeRegisteredDate}</td>
+          </tr>
+          <tr>
+            <th>4. Case Number (Reference)</th>
+            <td>${c.CaseNo || "Not Assigned"}</td>
+          </tr>
+          <tr>
+            <th>5. Acts & Sections</th>
+            <td>Indian Penal Code (IPC) / BNS Code — Major Head: ${c.CrimeGroupName} (Subhead: ${c.CrimeHeadName})</td>
+          </tr>
+          <tr>
+            <th>6. Occurrence details</th>
+            <td>Latitude: ${c.latitude.toFixed(6)} | Longitude: ${c.longitude.toFixed(6)}</td>
+          </tr>
+          <tr>
+            <th>7. Current Case Status</th>
+            <td><span style="text-transform: uppercase; font-weight: bold; color: #1E3A8A;">${c.CaseStatusName}</span></td>
+          </tr>
+        </table>
+
+        <h3 style="margin-top: 30px; font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 4px;">8. Brief Facts of the Case (FIR Statement)</h3>
+        <div class="facts-box">
+          "${c.BriefFacts}"
+        </div>
+
+        <div class="footer-section">
+          <div style="font-size: 11px; color: #64748B; float: left;">
+            Document Generated: ${dateStr}<br/>
+            KSP-CrimePilot AI System Audit Log
+          </div>
+          <div class="signature-box">
+            Investigating Officer Signature<br/>
+            <span style="font-size: 12px; font-weight: normal; color: #475569;">${c.UnitName} Police Station</span>
+          </div>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+          }
+        </script>
+      </body>
+      </html>
+    `
+    printWindow.document.write(htmlContent)
+    printWindow.document.close()
+  }
+
   useEffect(() => {
     async function fetchDashboardData() {
       try {
@@ -64,11 +180,21 @@ export default function Dashboard() {
 
         // Fetch cases
         const casesRes = await fetch("http://127.0.0.1:8000/api/cases", { headers })
+        if (casesRes.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
         if (!casesRes.ok) throw new Error("Failed to fetch cases database")
         const casesData = await casesRes.json()
 
         // Fetch offenders
         const offendersRes = await fetch("http://127.0.0.1:8000/api/cases/offenders", { headers })
+        if (offendersRes.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
         const offendersData = offendersRes.ok ? await offendersRes.json() : []
 
         setCases(casesData)
@@ -82,6 +208,39 @@ export default function Dashboard() {
 
     fetchDashboardData()
   }, [refreshTrigger])
+
+  // Fetch full details of selected case dossier
+  useEffect(() => {
+    if (selectedCaseId === null) {
+      setDetailedCase(null)
+      return
+    }
+
+    async function fetchCaseDetails() {
+      setLoadingCaseDetails(true)
+      try {
+        const token = localStorage.getItem("ksp_user_token")
+        const response = await fetch(`http://127.0.0.1:8000/api/cases/${selectedCaseId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (response.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
+        if (!response.ok) throw new Error("Failed to load case detail dossier")
+        const data = await response.json()
+        setDetailedCase(data)
+      } catch (err) {
+        console.error(err)
+        alert("Failed to retrieve complete case dossier.")
+      } finally {
+        setLoadingCaseDetails(false)
+      }
+    }
+
+    fetchCaseDetails()
+  }, [selectedCaseId])
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target
@@ -231,12 +390,23 @@ export default function Dashboard() {
           <p className="text-xs text-slate-500 font-semibold">Real-time crime statistics, timelines, and threat leaderboards.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setShowRegisterModal(true)}
-            className="text-xs font-black text-white bg-blue-900 hover:bg-blue-950 px-4.5 py-2.5 rounded-lg shadow-sm transition-all uppercase tracking-wider"
-          >
-            + Register Case
-          </button>
+          {localStorage.getItem("ksp_user_role")?.toLowerCase() === "constable" ? (
+            <button 
+              disabled
+              className="text-xs font-black text-slate-400 bg-slate-100 border border-slate-200 px-4.5 py-2.5 rounded-lg transition-all uppercase tracking-wider flex items-center gap-1.5 cursor-not-allowed"
+              title="Restricted: Constable accounts cannot file new FIR entries."
+            >
+              <Lock className="h-3.5 w-3.5" />
+              Register Case
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowRegisterModal(true)}
+              className="text-xs font-black text-white bg-blue-900 hover:bg-blue-950 px-4.5 py-2.5 rounded-lg shadow-sm transition-all uppercase tracking-wider"
+            >
+              + Register Case
+            </button>
+          )}
           <div className="text-right text-xs text-slate-400 font-medium">
             Last Sync: {new Date().toLocaleTimeString()} • State Data Node
           </div>
@@ -311,18 +481,22 @@ export default function Dashboard() {
             ) : (
               <div className="relative border-l border-blue-100 ml-3 pl-6 space-y-6 py-1">
                 {cases.slice(0, 5).map((c, idx) => (
-                  <div key={`${c.CaseMasterID}-${idx}`} className="relative">
-                    <div className="absolute -left-[31px] top-0.5 h-3.5 w-3.5 rounded-full border-2 border-white bg-blue-950 shadow-sm"></div>
+                  <div 
+                    key={`${c.CaseMasterID}-${idx}`} 
+                    className="relative cursor-pointer hover:bg-blue-50/20 p-3.5 rounded-xl border border-transparent hover:border-blue-100/50 transition-all group"
+                    onClick={() => setSelectedCaseId(c.CaseMasterID)}
+                  >
+                    <div className="absolute -left-[31px] top-4 h-3.5 w-3.5 rounded-full border-2 border-white bg-blue-950 shadow-sm"></div>
                     
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-900">Crime No: {c.CrimeNo}</span>
+                        <span className="text-xs font-bold text-slate-900 group-hover:text-blue-900 transition-colors">Crime No: {c.CrimeNo}</span>
                         <span className="text-[10px] font-semibold text-blue-800 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">
                           {c.CrimeGroupName}
                         </span>
                       </div>
                       
-                      <p className="text-[11px] text-slate-600 leading-normal bg-slate-50/50 p-2.5 rounded-lg border border-slate-100/60 font-medium">
+                      <p className="text-[11px] text-slate-600 leading-normal bg-slate-50/50 group-hover:bg-white p-2.5 rounded-lg border border-slate-100/60 font-medium transition-colors">
                         {c.BriefFacts}
                       </p>
                       
@@ -334,7 +508,17 @@ export default function Dashboard() {
                         <span>•</span>
                         <span>Date: {c.CrimeRegisteredDate}</span>
                         <span>•</span>
-                        <span className="text-blue-900">{c.CaseStatusName}</span>
+                        <span className="text-blue-905">{c.CaseStatusName}</span>
+                        <span>•</span>
+                        <button
+                          type="button"
+                          onClick={(e: any) => { e.stopPropagation(); handleExportFir(c); }}
+                          className="text-blue-900 hover:text-blue-950 underline font-black cursor-pointer flex items-center gap-0.5"
+                          title="Generate official printable FIR PDF"
+                        >
+                          <FileText className="h-3 w-3 text-blue-900 inline" />
+                          FIR PDF
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -684,6 +868,152 @@ export default function Dashboard() {
               >
                 Submit Register
               </button>
+            </div>
+
+          </Card>
+        </div>
+      )}
+
+      {/* Case Details Dossier Modal */}
+      {selectedCaseId !== null && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <Card className="w-full max-w-2xl bg-white border border-blue-100 shadow-2xl rounded-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-center p-5 border-b border-blue-50 bg-blue-50/20">
+              <div className="flex items-center gap-2.5">
+                <Shield className="h-5 w-5 text-blue-900" />
+                <div>
+                  <CardTitle className="text-sm font-black text-slate-900 uppercase tracking-wider">
+                    {loadingCaseDetails ? "Loading Case Dossier..." : `FIR Case Dossier: ${detailedCase?.CrimeNo || ""}`}
+                  </CardTitle>
+                  <CardDescription className="text-[10px] text-slate-400 font-semibold uppercase">
+                    Official Karnataka State Police Records
+                  </CardDescription>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedCaseId(null)}
+                className="p-1.5 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {loadingCaseDetails ? (
+                <div className="py-20 text-center space-y-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-900 mx-auto" />
+                  <p className="text-xs text-slate-500 font-medium">Retrieving database case references...</p>
+                </div>
+              ) : detailedCase ? (
+                <div className="space-y-5">
+                  
+                  {/* Summary Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">Station Unit</div>
+                      <div className="text-xs font-bold text-slate-800 mt-0.5">{detailedCase.UnitName}</div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">District Jurisdiction</div>
+                      <div className="text-xs font-bold text-slate-800 mt-0.5">{detailedCase.DistrictName}</div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">Date of Incident</div>
+                      <div className="text-xs font-bold text-slate-800 mt-0.5">
+                        {detailedCase.IncidentFromDate ? new Date(detailedCase.IncidentFromDate).toLocaleDateString() : "Unknown"}
+                      </div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">Crime Category</div>
+                      <div className="text-xs font-bold text-slate-800 mt-0.5">{detailedCase.CrimeGroupName}</div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">Case Status</div>
+                      <div className="text-xs font-black text-blue-900 mt-0.5 uppercase">{detailedCase.CaseStatusName}</div>
+                    </div>
+                    <div className="p-3 bg-slate-50 border rounded-xl">
+                      <div className="text-[9px] font-black text-slate-400 uppercase">Investigating Officer</div>
+                      <div className="text-xs font-bold text-slate-800 mt-0.5">{detailedCase.OfficerName || "Manjunath IO"}</div>
+                    </div>
+                  </div>
+
+                  {/* Legal Sections */}
+                  {detailedCase.legal_sections && detailedCase.legal_sections.length > 0 && (
+                    <div className="space-y-1.5">
+                      <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Act & Sections Association</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {detailedCase.legal_sections.map((sec: any, idx: number) => (
+                          <span key={idx} className="text-[10px] font-bold bg-blue-50 border border-blue-100 text-blue-900 px-2.5 py-1 rounded-lg" title={sec.SectionDescription}>
+                            Act {sec.ActID} — Sec. {sec.SectionID}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Accused & Complainant & Victims */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <div className="border border-blue-50 rounded-xl p-4 bg-blue-50/10 space-y-2">
+                      <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Suspect Details</h4>
+                      {detailedCase.accused && detailedCase.accused.length > 0 ? (
+                        detailedCase.accused.map((acc: any, idx: number) => (
+                          <div key={idx} className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                            <span>👤 {acc.AccusedName} ({acc.AgeYear} yrs)</span>
+                            <span className="text-[9px] bg-slate-200 px-1.5 py-0.5 rounded uppercase font-semibold text-slate-600">Accused {acc.PersonID || "A1"}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-slate-400 italic">No suspects entered yet.</p>
+                      )}
+                    </div>
+
+                    <div className="border border-blue-50 rounded-xl p-4 bg-blue-50/10 space-y-2">
+                      <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Complainant Details</h4>
+                      {detailedCase.complainant ? (
+                        <div className="text-xs font-bold text-slate-800 space-y-1">
+                          <div>👤 {detailedCase.complainant.ComplainantName}</div>
+                          <div className="text-[9px] text-slate-400 font-semibold uppercase">Age: {detailedCase.complainant.AgeYear || "N/A"} yrs</div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-slate-400 italic">No complainant logged.</p>
+                      )}
+                    </div>
+
+                  </div>
+
+                  {/* Brief Facts */}
+                  <div className="space-y-1.5">
+                    <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Brief Facts Statement</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 border p-4 rounded-xl font-medium italic">
+                      "{detailedCase.BriefFacts}"
+                    </p>
+                  </div>
+
+                  {/* Actions (Export FIR PDF inside Dossier) */}
+                  <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                    <button
+                      onClick={() => handleExportFir(detailedCase)}
+                      className="text-xs font-black text-white bg-blue-900 hover:bg-blue-950 px-4 py-2 rounded-lg shadow-sm transition-all uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FileText className="h-3.5 w-3.5" />
+                      Print Official FIR PDF
+                    </button>
+                    <button
+                      onClick={() => setSelectedCaseId(null)}
+                      className="text-xs font-black border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 px-4 py-2 rounded-lg transition-all uppercase tracking-wider cursor-pointer"
+                    >
+                      Close Dossier
+                    </button>
+                  </div>
+
+                </div>
+              ) : (
+                <div className="py-20 text-center text-xs text-slate-400">Failed to render case.</div>
+              )}
             </div>
 
           </Card>

@@ -6,6 +6,8 @@ import { Shield, Search, TrendingUp, AlertTriangle, Users, Award } from "lucide-
 interface Offender {
   name: string
   case_count: number
+  heinous_count: number
+  accomplice_count: number
   threat_score: number
   risk_level: "High" | "Medium" | "Low"
 }
@@ -154,6 +156,11 @@ export default function OffenderHub() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const response = await fetch("http://127.0.0.1:8000/api/cases/offenders", { headers })
+        if (response.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
         if (!response.ok) throw new Error("Failed to load habitual offender directory")
 
         const data = await response.json()
@@ -315,17 +322,33 @@ export default function OffenderHub() {
                   
                   <div className="border border-blue-50 bg-blue-50/10 rounded-xl p-3 text-center">
                     <TrendingUp className="h-4.5 w-4.5 text-blue-900 mx-auto mb-1" />
-                    <div className="text-[8px] font-bold text-slate-450 uppercase">Recidivism Rate</div>
+                    <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Total Crimes</div>
                     <div className="text-sm font-black text-slate-900 mt-0.5">
-                      {selectedOffender.case_count >= 3 ? "Critical" : (selectedOffender.case_count >= 2 ? "High" : "Moderate")}
+                      {selectedOffender.case_count} case(s)
+                    </div>
+                  </div>
+
+                  <div className="border border-blue-50 bg-blue-50/10 rounded-xl p-3 text-center">
+                    <Shield className="h-4.5 w-4.5 text-blue-900 mx-auto mb-1" />
+                    <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Heinous Offences</div>
+                    <div className="text-sm font-black text-slate-900 mt-0.5">
+                      {selectedOffender.heinous_count}
                     </div>
                   </div>
 
                   <div className="border border-blue-50 bg-blue-50/10 rounded-xl p-3 text-center">
                     <Users className="h-4.5 w-4.5 text-blue-900 mx-auto mb-1" />
-                    <div className="text-[8px] font-bold text-slate-450 uppercase">Accomplice Links</div>
+                    <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Linked Accomplices</div>
                     <div className="text-sm font-black text-slate-900 mt-0.5">
-                      {selectedOffender.name.toLowerCase().includes("suresh") ? "5 active" : "2 linked"}
+                      {selectedOffender.accomplice_count}
+                    </div>
+                  </div>
+
+                  <div className="border border-blue-50 bg-blue-50/10 rounded-xl p-3 text-center">
+                    <AlertTriangle className="h-4.5 w-4.5 text-blue-900 mx-auto mb-1" />
+                    <div className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Recidivism Risk</div>
+                    <div className="text-sm font-black text-slate-900 mt-0.5">
+                      {selectedOffender.case_count >= 3 ? "Critical" : (selectedOffender.case_count >= 2 ? "High" : "Moderate")}
                     </div>
                   </div>
 

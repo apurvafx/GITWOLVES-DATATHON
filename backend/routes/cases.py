@@ -13,7 +13,7 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-@router.get("/")
+@router.get("")
 def get_cases(district_id: int = None, user: dict = Depends(get_current_user)):
     # Role-based restriction check: Policymaker gets anonymized or general data, but for hackathon demo we will allow it
     conn = get_db_connection()
@@ -236,6 +236,8 @@ def get_offenders(user: dict = Depends(get_current_user)):
         offenders.append({
             "name": name,
             "case_count": case_count,
+            "heinous_count": heinous_count,
+            "accomplice_count": max(0, accomplice_count),
             "threat_score": threat_score,
             "risk_level": "High" if threat_score >= 60 else ("Medium" if threat_score >= 30 else "Low")
         })
@@ -342,7 +344,7 @@ class CaseRegisterPayload(BaseModel):
     accused_role: Optional[str] = None
 
 @router.post("/register")
-def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_current_user)):
+async def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
@@ -369,6 +371,18 @@ def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_current
             """, (case_master_id, payload.accused_name, payload.accused_age or 30, 1, payload.accused_role or "A1"))
             
         conn.commit()
+        
+        # Broadcast case registration alert to all connected sockets
+        from backend.websocket_manager import manager
+        import asyncio
+        asyncio.create_task(manager.broadcast({
+            "type": "NEW_CASE",
+            "crime_no": payload.crime_no,
+            "facts": payload.facts[:60] + ("..." if len(payload.facts) > 60 else ""),
+            "lat": payload.lat,
+            "lng": payload.lng
+        }))
+        
         return {"status": "success", "case_master_id": case_master_id}
     except sqlite3.IntegrityError as e:
         conn.rollback()

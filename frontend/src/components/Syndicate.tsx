@@ -108,6 +108,11 @@ export default function Syndicate() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const response = await fetch("http://127.0.0.1:8000/api/cases/network/graph", { headers })
+        if (response.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
         if (!response.ok) throw new Error("Failed to load criminal network graph")
 
         const data = await response.json()

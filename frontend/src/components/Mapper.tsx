@@ -28,6 +28,9 @@ export default function Mapper() {
   const [selectedDistrict, setSelectedDistrict] = useState("All Districts")
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
   const [showRadiusHotspots, setShowRadiusHotspots] = useState(true)
+  const [selectedYear, setSelectedYear] = useState<number>(2026)
+  const [minYear, setMinYear] = useState<number>(2018)
+  const [maxYear, setMaxYear] = useState<number>(2026)
 
   useEffect(() => {
     async function fetchCases() {
@@ -36,6 +39,11 @@ export default function Mapper() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const response = await fetch("http://127.0.0.1:8000/api/cases", { headers })
+        if (response.status === 401) {
+          localStorage.clear()
+          window.location.reload()
+          return
+        }
         if (!response.ok) throw new Error("Failed to load map coordinate cases")
         
         // Wait, the API returns a redirect to /api/cases/ or direct JSON
@@ -44,6 +52,19 @@ export default function Mapper() {
         // Filter out cases that do not have valid coordinates
         const validCases = data.filter((c: Case) => c.latitude && c.longitude)
         setCases(validCases)
+        
+        // Dynamically compute the min and max years from loaded dataset
+        if (validCases.length > 0) {
+          const years = validCases.map((c: Case) => {
+            const yr = new Date(c.CrimeRegisteredDate).getFullYear()
+            return isNaN(yr) ? 2026 : yr
+          })
+          const min = Math.min(...years)
+          const max = Math.max(...years)
+          setMinYear(min)
+          setMaxYear(max)
+          setSelectedYear(max)
+        }
         setFilteredCases(validCases)
       } catch (err: any) {
         setError(err.message || "Failed to establish map server link")
@@ -64,8 +85,13 @@ export default function Mapper() {
     if (selectedCategory !== "All Categories") {
       result = result.filter(c => c.CrimeGroupName === selectedCategory)
     }
+    // Filter by selected year threshold
+    result = result.filter(c => {
+      const yr = new Date(c.CrimeRegisteredDate).getFullYear()
+      return isNaN(yr) || yr <= selectedYear
+    })
     setFilteredCases(result.slice(0, 1000))
-  }, [selectedDistrict, selectedCategory, cases])
+  }, [selectedDistrict, selectedCategory, selectedYear, cases])
 
   if (loading) {
     return (
@@ -146,6 +172,19 @@ export default function Mapper() {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
+            </div>
+
+            {/* Spatiotemporal Year Slider */}
+            <div className="flex items-center gap-2 border border-blue-100 rounded-lg px-2.5 py-1.5 bg-white text-slate-700">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Timeline: {selectedYear}</span>
+              <input
+                type="range"
+                min={minYear}
+                max={maxYear}
+                value={selectedYear}
+                onChange={(e: any) => setSelectedYear(parseInt(e.target.value))}
+                className="w-24 h-1 bg-blue-100 rounded-lg appearance-none cursor-pointer accent-blue-900"
+              />
             </div>
 
             {/* Hotspots toggle */}

@@ -84,13 +84,13 @@ export default function Login({ onLoginSuccess }: LoginProps) {
               {/* Role Select Quick Tabs */}
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-gray-700">Select Access Credential</Label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {["Investigator", "Analyst", "Supervisor", "Policymaker"].map((r) => (
+                <div className="grid grid-cols-3 gap-1.5">
+                  {["Investigator", "Analyst", "Supervisor", "Policymaker", "Constable"].map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => handleRoleChange(r)}
-                      className={`py-1.5 px-3 text-xs font-medium border rounded-md transition-all text-center ${
+                      className={`py-1.5 px-2 text-[10px] font-bold border rounded-md transition-all text-center ${
                         role === r
                           ? "bg-blue-900 text-white border-blue-900 shadow-sm"
                           : "bg-blue-50/20 text-slate-700 border-blue-100 hover:bg-blue-50/50"

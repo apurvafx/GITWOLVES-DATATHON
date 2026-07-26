@@ -39,6 +39,13 @@ MOCK_USERS = {
         "role": "Policymaker",
         "kgid": "KGID-KA90001",
         "password": "password123"
+    },
+    "constable": {
+        "username": "constable",
+        "name": "Constable Patil",
+        "role": "Constable",
+        "kgid": "KGID-KA99401",
+        "password": "password123"
     }
 }
 

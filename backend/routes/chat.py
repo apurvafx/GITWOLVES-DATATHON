@@ -195,7 +195,7 @@ def fallback_nlp_query(user_msg: str, lang: str):
         "coordinates": []
     }
 
-@router.post("/")
+@router.post("")
 def process_chat(chat_request: ChatMessage, user: dict = Depends(get_current_user)):
     user_msg = chat_request.message
     lang = chat_request.language
