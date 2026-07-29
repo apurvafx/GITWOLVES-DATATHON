@@ -182,8 +182,8 @@ graph TD
 
 <table>
   <tr>
-    <td><img src="assets/landing page.png" alt="Landing Page View 1"/></td>
-    <td><img src="assets/landing page 2.png" alt="Landing Page View 2"/></td>
+    <td><img src="assets/landing%20page.png" alt="Landing Page View 1"/></td>
+    <td><img src="assets/landing%20page%202.png" alt="Landing Page View 2"/></td>
   </tr>
 </table>
 
@@ -217,7 +217,7 @@ An interactive Leaflet.js map rendering all case coordinates as classified marke
 
 A Three.js WebGL canvas rendering the full criminal network as an interactive node graph. Nodes represent accused persons, bank accounts, and case entities. Edges map transaction trails and accomplice relationships. Officers can orbit, zoom, and click-select individual nodes to inspect their profile and connections. Access is restricted to SHO clearance and above.
 
-![Syndicate Link 3D Graph](assets/syndicate link.png)
+![Syndicate Link 3D Graph](assets/syndicate%20link.png)
 
 ---
 
@@ -225,7 +225,7 @@ A Three.js WebGL canvas rendering the full criminal network as an interactive no
 
 A searchable directory of all tracked offenders with dynamically computed threat scores, recidivism risk classifications (Moderate / High / Critical), heinous offense counts, and accomplice linkage statistics. Selecting an offender renders their full threat profile alongside historical case participation charts.
 
-![Offender Hub](assets/offender hub.png)
+![Offender Hub](assets/offender%20hub.png)
 
 ---
 
