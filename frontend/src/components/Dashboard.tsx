@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Shield, AlertTriangle, BadgePercent, Calendar, MapPin, Landmark, Upload, Loader2, Sparkles, X, FileText, Lock } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface Case {
   CaseMasterID: number
@@ -179,7 +180,7 @@ export default function Dashboard() {
         const headers = { Authorization: `Bearer ${token}` }
 
         // Fetch cases
-        const casesRes = await fetch("http://127.0.0.1:8000/api/cases", { headers })
+        const casesRes = await fetch(`${API_BASE_URL}/api/cases`, { headers })
         if (casesRes.status === 401) {
           localStorage.clear()
           window.location.reload()
@@ -189,7 +190,7 @@ export default function Dashboard() {
         const casesData = await casesRes.json()
 
         // Fetch offenders
-        const offendersRes = await fetch("http://127.0.0.1:8000/api/cases/offenders", { headers })
+        const offendersRes = await fetch(`${API_BASE_URL}/api/cases/offenders`, { headers })
         if (offendersRes.status === 401) {
           localStorage.clear()
           window.location.reload()
@@ -220,7 +221,7 @@ export default function Dashboard() {
       setLoadingCaseDetails(true)
       try {
         const token = localStorage.getItem("ksp_user_token")
-        const response = await fetch(`http://127.0.0.1:8000/api/cases/${selectedCaseId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/cases/${selectedCaseId}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (response.status === 401) {
@@ -287,7 +288,7 @@ export default function Dashboard() {
     e.preventDefault()
     try {
       const token = localStorage.getItem("ksp_user_token")
-      const response = await fetch("http://127.0.0.1:8000/api/cases/register", {
+      const response = await fetch(`${API_BASE_URL}/api/cases/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

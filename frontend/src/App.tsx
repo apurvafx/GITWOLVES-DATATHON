@@ -7,6 +7,7 @@ import Mapper from "./components/Mapper"
 import Syndicate from "./components/Syndicate"
 import OffenderHub from "./components/OffenderHub"
 import { Shield, LayoutDashboard, MessageSquareCode, Map, Share2, Users, LogOut, Lock } from "lucide-react"
+import { WS_BASE_URL } from "@/config"
 
 // Types
 interface UserSession {
@@ -51,8 +52,7 @@ export default function App() {
   useEffect(() => {
     if (view !== "portal") return
 
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:"
-    const wsUrl = `${protocol}//${window.location.hostname}:8000/ws/alerts`
+    const wsUrl = `${WS_BASE_URL}/ws/alerts`
     let socket: WebSocket
 
     function connectWs() {

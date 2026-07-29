@@ -12,7 +12,9 @@ if os.path.exists("main.py") and not os.path.exists("backend"):
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routes import auth, cases, chat
+from backend.rate_limiter import RateLimiterMiddleware
 from dotenv import load_dotenv
+import os
 
 # Load environmental variables
 load_dotenv()
@@ -23,14 +25,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configure CORS for frontend access (Vite on 5173, Next.js on 3000)
+# Configure CORS origins from environment variable
+allowed_origins_env = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
+allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For hackathon ease of development, allow all origins
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Register Rate Limiting Middleware
+app.add_middleware(RateLimiterMiddleware)
 
 # Register routers
 app.include_router(auth.router)

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Shield, Eye, EyeOff } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface LoginProps {
   onLoginSuccess: (userData: { username: string; name: string; role: string; kgid: string; token: string }) => void
@@ -30,7 +31,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
     setLoading(true)
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })

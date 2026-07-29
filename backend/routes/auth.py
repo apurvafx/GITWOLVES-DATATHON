@@ -1,57 +1,86 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 import jwt
 from datetime import datetime, timedelta
+from passlib.context import CryptContext
+import os
+import re
+import secrets
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 security = HTTPBearer()
 
-SECRET_KEY = "ksp_crimepilot_super_secret_key"
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
+# Load JWT Secret Key from environment
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    SECRET_KEY = secrets.token_hex(32)
+    print("[Warning] JWT_SECRET_KEY environment variable not set. Generated a random session secret.")
+
 ALGORITHM = "HS256"
 
-# Mock User Accounts with specific roles
+# Mock User Accounts with specific roles (Passwords loaded from env & hashed on startup)
 MOCK_USERS = {
     "investigator": {
         "username": "investigator",
         "name": "Manjunath IO",
         "role": "Investigator",
         "kgid": "KGID-KA99102",
-        "password": "password123"
+        "password_hash": pwd_context.hash(os.environ.get("MOCK_PASSWORD_INVESTIGATOR", "password123"))
     },
     "analyst": {
         "username": "analyst",
         "name": "Anitha Analyst",
         "role": "Analyst",
         "kgid": "KGID-KA99144",
-        "password": "password123"
+        "password_hash": pwd_context.hash(os.environ.get("MOCK_PASSWORD_ANALYST", "password123"))
     },
     "supervisor": {
         "username": "supervisor",
         "name": "SP Raghavendra",
         "role": "Supervisor",
         "kgid": "KGID-KA99182",
-        "password": "password123"
+        "password_hash": pwd_context.hash(os.environ.get("MOCK_PASSWORD_SUPERVISOR", "password123"))
     },
     "policymaker": {
         "username": "policymaker",
         "name": "DGP Kiran Kumar",
         "role": "Policymaker",
         "kgid": "KGID-KA90001",
-        "password": "password123"
+        "password_hash": pwd_context.hash(os.environ.get("MOCK_PASSWORD_POLICYMAKER", "password123"))
     },
     "constable": {
         "username": "constable",
         "name": "Constable Patil",
         "role": "Constable",
         "kgid": "KGID-KA99401",
-        "password": "password123"
+        "password_hash": pwd_context.hash(os.environ.get("MOCK_PASSWORD_CONSTABLE", "password123"))
     }
 }
 
 class LoginRequest(BaseModel):
-    username: str
-    password: str
+    username: str = Field(..., max_length=50)
+    password: str = Field(..., max_length=100)
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        v = v.strip().lower()
+        if not v:
+            raise ValueError("Username cannot be empty or whitespace only")
+        # Enforce alphanumeric, hyphens, and underscores
+        if not re.match(r"^[a-zA-Z0-9\-_]+$", v):
+            raise ValueError("Username contains invalid characters (letters, numbers, '-', and '_' only)")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, v: str) -> str:
+        if not v:
+            raise ValueError("Password cannot be empty")
+        return v
 
 class UserResponse(BaseModel):
     username: str
@@ -68,8 +97,8 @@ def create_jwt_token(data: dict, expires_delta: timedelta = timedelta(hours=8)):
 
 @router.post("/login", response_model=UserResponse)
 def login(request: LoginRequest):
-    user = MOCK_USERS.get(request.username.lower())
-    if not user or user["password"] != request.password:
+    user = MOCK_USERS.get(request.username)
+    if not user or not pwd_context.verify(request.password, user["password_hash"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password"

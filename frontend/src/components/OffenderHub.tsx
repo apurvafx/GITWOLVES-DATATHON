@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Shield, Search, TrendingUp, AlertTriangle, Users, Award } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface Offender {
   name: string
@@ -155,7 +156,7 @@ export default function OffenderHub() {
         const token = localStorage.getItem("ksp_user_token")
         const headers = { Authorization: `Bearer ${token}` }
 
-        const response = await fetch("http://127.0.0.1:8000/api/cases/offenders", { headers })
+        const response = await fetch(`${API_BASE_URL}/api/cases/offenders`, { headers })
         if (response.status === 401) {
           localStorage.clear()
           window.location.reload()

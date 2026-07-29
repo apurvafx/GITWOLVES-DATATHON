@@ -6,10 +6,29 @@ __pycache__/
 *.pyd
 .pytest_cache/
 .ipynb_checkpoints/
-backend/.env
-backend/database/ksp_crime.db
 frontend/node_modules/
 frontend/dist/
 *.log
 .DS_Store
 Thumbs.db
+
+# Ignore all python dependency packages and artifacts in backend
+backend/*
+
+# Unignore project files
+!backend/main.py
+!backend/rate_limiter.py
+!backend/.env.example
+!backend/websocket_manager.py
+!backend/app-config.json
+!backend/requirements.txt
+!backend/routes/
+!backend/routes/**
+!backend/database/
+!backend/database/init_db.py
+!backend/evaluation/
+!backend/evaluation/**
+
+# Ensure database and env files remain ignored
+backend/database/ksp_crime.db
+backend/.env

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { MapContainer, TileLayer, CircleMarker, Popup, Circle } from "react-leaflet"
 import { Shield, MapPin, Filter, Layers } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface Case {
   CaseMasterID: number
@@ -38,7 +39,7 @@ export default function Mapper() {
         const token = localStorage.getItem("ksp_user_token")
         const headers = { Authorization: `Bearer ${token}` }
 
-        const response = await fetch("http://127.0.0.1:8000/api/cases", { headers })
+        const response = await fetch(`${API_BASE_URL}/api/cases`, { headers })
         if (response.status === 401) {
           localStorage.clear()
           window.location.reload()

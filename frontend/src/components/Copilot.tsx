@@ -5,6 +5,7 @@ import {
   MessageSquare, Send, Mic, MicOff, Volume2, VolumeX, Code, 
   Clock, Database, Download, Plus, Trash2 
 } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface Message {
   role: "user" | "assistant"
@@ -233,7 +234,7 @@ export default function Copilot() {
         content: m.content
       }))
 
-      const response = await fetch("http://127.0.0.1:8000/api/chat/", {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

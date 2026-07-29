@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from backend.routes.auth import get_current_user
 import os
 import re
 import json
 import sqlite3
+import html
 
 # LangChain Imports
 from langchain_community.utilities import SQLDatabase
@@ -19,10 +20,68 @@ DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 # Load environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
+class ChatHistoryItem(BaseModel):
+    role: str = Field(..., max_length=20)
+    content: str = Field(..., max_length=1000)
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v: str) -> str:
+        v = v.strip().lower()
+        if v not in ("user", "assistant"):
+            raise ValueError("Role must be 'user' or 'assistant'")
+        return v
+
+    @field_validator("content")
+    @classmethod
+    def sanitize_content(cls, v: str) -> str:
+        v = v.strip()
+        return html.escape(v)
+
 class ChatMessage(BaseModel):
-    message: str
-    language: str = "English"  # "English" or "Kannada"
-    history: list = []         # [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}]
+    message: str = Field(..., max_length=1000)
+    language: str = Field("English", max_length=20)
+    history: list[ChatHistoryItem] = Field(default_factory=list)
+
+    @field_validator("message")
+    @classmethod
+    def sanitize_message(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Message cannot be empty")
+        return html.escape(v)
+
+    @field_validator("language")
+    @classmethod
+    def validate_language(cls, v: str) -> str:
+        v = v.strip()
+        if v not in ("English", "Kannada"):
+            raise ValueError("Language must be 'English' or 'Kannada'")
+        return v
+
+def is_sql_query_safe(sql: str) -> bool:
+    sql_clean = sql.strip().lower()
+    
+    # 1. Must start with SELECT
+    if not sql_clean.startswith("select"):
+        return False
+        
+    # 2. Block multiple statements (semicolon)
+    if ";" in sql_clean:
+        return False
+        
+    # 3. Block dangerous commands/functions
+    blocked_keywords = [
+        "insert", "update", "delete", "drop", "alter", "create", "replace",
+        "pragma", "load_extension", "sqlite_master", "sqlite_schema",
+        "sqlite_temp_master", "sqlite_temp_schema", "attach", "detach"
+    ]
+    for keyword in blocked_keywords:
+        # Use word boundaries to avoid false positives (e.g. "created_date" containing "create")
+        if re.search(r"\b" + re.escape(keyword) + r"\b", sql_clean):
+            return False
+            
+    return True
 
 # LangChain SQL Database initialization
 db = SQLDatabase.from_uri(f"sqlite:///{DB_PATH}")
@@ -112,7 +171,7 @@ def fallback_nlp_query(user_msg: str, lang: str):
     # Execute SQL if generated
     if sql_query:
         try:
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             cursor.execute(sql_query)
@@ -251,12 +310,12 @@ def process_chat(chat_request: ChatMessage, user: dict = Depends(get_current_use
     explanation = "SQL compiled successfully." if sql_query else "General conversation query."
     
     if sql_query:
-        if not re.match(r"^\s*SELECT", sql_query, re.IGNORECASE):
+        if not is_sql_query_safe(sql_query):
             sql_query = ""
-            explanation = "SQL blocked for security (Only SELECT allowed)."
+            explanation = "SQL blocked for security (Only SELECT queries are allowed)."
         else:
             try:
-                conn = sqlite3.connect(DB_PATH)
+                conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
                 conn.row_factory = sqlite3.Row
                 cursor = conn.cursor()
                 cursor.execute(sql_query)
@@ -264,7 +323,8 @@ def process_chat(chat_request: ChatMessage, user: dict = Depends(get_current_use
                 db_results = [dict(row) for row in rows]
                 conn.close()
             except Exception as e:
-                db_results = [{"error": str(e)}]
+                print(f"[Database Error] Chat SQL execution failed: {e}")
+                db_results = [{"error": "Database query failed to execute."}]
                 explanation = "SQL execution failed."
 
     # Response Synthesis Chain

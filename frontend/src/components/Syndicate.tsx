@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Html } from "@react-three/drei"
 import { Input } from "@/components/ui/input"
 import { Network, Landmark, Users, Search, Info, ToggleLeft } from "lucide-react"
+import { API_BASE_URL } from "@/config"
 
 interface Node {
   id: string
@@ -107,7 +108,7 @@ export default function Syndicate() {
         const token = localStorage.getItem("ksp_user_token")
         const headers = { Authorization: `Bearer ${token}` }
 
-        const response = await fetch("http://127.0.0.1:8000/api/cases/network/graph", { headers })
+        const response = await fetch(`${API_BASE_URL}/api/cases/network/graph`, { headers })
         if (response.status === 401) {
           localStorage.clear()
           window.location.reload()

@@ -1,9 +1,11 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query, Path
 from backend.routes.auth import get_current_user
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 import sqlite3
 import os
+import html
+import re
 
 router = APIRouter(prefix="/api/cases", tags=["cases"])
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "database", "ksp_crime.db")
@@ -14,7 +16,7 @@ def get_db_connection():
     return conn
 
 @router.get("")
-def get_cases(district_id: int = None, user: dict = Depends(get_current_user)):
+def get_cases(district_id: Optional[int] = Query(None, ge=1), user: dict = Depends(get_current_user)):
     # Role-based restriction check: Policymaker gets anonymized or general data, but for hackathon demo we will allow it
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -246,7 +248,7 @@ def get_offenders(user: dict = Depends(get_current_user)):
     return offenders
 
 @router.get("/{case_id}")
-def get_case_details(case_id: int, user: dict = Depends(get_current_user)):
+def get_case_details(case_id: int = Path(..., ge=1), user: dict = Depends(get_current_user)):
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -325,23 +327,72 @@ def get_case_details(case_id: int, user: dict = Depends(get_current_user)):
     
     conn.close()
     return case_dict
-
 class CaseRegisterPayload(BaseModel):
-    crime_no: str
-    case_no: str
-    crime_date: str
-    station_id: int
-    major_head_id: int
-    minor_head_id: int
-    gravity_id: int
-    status_id: int
-    court_id: int
-    lat: float
-    lng: float
-    facts: str
-    accused_name: Optional[str] = None
-    accused_age: Optional[int] = None
-    accused_role: Optional[str] = None
+    crime_no: str = Field(..., max_length=50)
+    case_no: str = Field(..., max_length=50)
+    crime_date: str = Field(..., max_length=30)
+    station_id: int = Field(..., ge=1)
+    major_head_id: int = Field(..., ge=1)
+    minor_head_id: int = Field(..., ge=1)
+    gravity_id: int = Field(..., ge=1)
+    status_id: int = Field(..., ge=1)
+    court_id: int = Field(..., ge=1)
+    lat: float = Field(..., ge=-90.0, le=90.0)
+    lng: float = Field(..., ge=-180.0, le=180.0)
+    facts: str = Field(..., max_length=5000)
+    accused_name: Optional[str] = Field(None, max_length=100)
+    accused_age: Optional[int] = Field(None, ge=0, le=150)
+    accused_role: Optional[str] = Field(None, max_length=20)
+
+    @field_validator("crime_no", "case_no")
+    @classmethod
+    def sanitize_identifiers(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Identifier cannot be empty")
+        if not re.match(r"^[A-Za-z0-9\-_/]+$", v):
+            raise ValueError("Identifier contains invalid characters")
+        return v
+
+    @field_validator("crime_date")
+    @classmethod
+    def validate_date(cls, v: str) -> str:
+        v = v.strip()
+        if not re.match(r"^\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2}:\d{2})?$", v):
+            raise ValueError("Date must be in YYYY-MM-DD format")
+        return v
+
+    @field_validator("facts")
+    @classmethod
+    def sanitize_facts(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Facts cannot be empty")
+        return html.escape(v)
+
+    @field_validator("accused_name")
+    @classmethod
+    def sanitize_accused_name(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if not v:
+            return None
+        if not re.match(r"^[A-Za-z\s.\-]+$", v):
+            raise ValueError("Accused name contains invalid characters")
+        return html.escape(v)
+
+    @field_validator("accused_role")
+    @classmethod
+    def sanitize_accused_role(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if not v:
+            return None
+        if not re.match(r"^[A-Za-z0-9\-]+$", v):
+            raise ValueError("Accused role contains invalid characters")
+        return html.escape(v)
 
 @router.post("/register")
 async def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_current_user)):
@@ -386,9 +437,11 @@ async def register_case(payload: CaseRegisterPayload, user: dict = Depends(get_c
         return {"status": "success", "case_master_id": case_master_id}
     except sqlite3.IntegrityError as e:
         conn.rollback()
-        raise HTTPException(status_code=400, detail=f"Database integrity error: {str(e)}")
+        print(f"[Database Error] Integrity Error in register_case: {e}")
+        raise HTTPException(status_code=400, detail="Database integrity error: Check input values or duplicate record.")
     except Exception as e:
         conn.rollback()
-        raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
+        print(f"[Server Error] Exception in register_case: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error occurred.")
     finally:
         conn.close()
