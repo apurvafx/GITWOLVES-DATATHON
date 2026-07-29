@@ -385,7 +385,7 @@ export default function Dashboard() {
     <div className="space-y-6 max-w-7xl mx-auto font-sans select-none relative">
       
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h2>
           <p className="text-xs text-slate-500 font-semibold">Real-time crime statistics, timelines, and threat leaderboards.</p>
@@ -654,7 +654,7 @@ export default function Dashboard() {
               </div>
 
               {/* Grid: Case Numbers & Date */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Crime Number (18 Digits)</label>
                   <Input 
@@ -691,7 +691,7 @@ export default function Dashboard() {
               </div>
 
               {/* Grid: Unit, Category, Severity */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Police Station Unit</label>
                   <select
@@ -734,7 +734,7 @@ export default function Dashboard() {
               </div>
 
               {/* Grid: Crime Head Classification */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Major Crime Group</label>
                   <select
@@ -769,7 +769,7 @@ export default function Dashboard() {
               </div>
 
               {/* Geospatial Coordinates */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-black text-slate-500 uppercase tracking-wider">Latitude Coordinate</label>
                   <Input
@@ -800,7 +800,7 @@ export default function Dashboard() {
               <div className="p-4 bg-slate-50/50 border border-slate-100 rounded-xl space-y-3">
                 <h5 className="text-[10px] font-black text-slate-600 uppercase tracking-wider">Accused Suspect Profile (Syndicate Mapping)</h5>
                 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1">
                     <label className="text-[8px] font-bold text-slate-500 uppercase">Suspect Name</label>
                     <Input

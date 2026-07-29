@@ -6,7 +6,7 @@ import Copilot from "./components/Copilot"
 import Mapper from "./components/Mapper"
 import Syndicate from "./components/Syndicate"
 import OffenderHub from "./components/OffenderHub"
-import { Shield, LayoutDashboard, MessageSquareCode, Map, Share2, Users, LogOut, Lock } from "lucide-react"
+import { Shield, LayoutDashboard, MessageSquareCode, Map, Share2, Users, LogOut, Lock, Menu } from "lucide-react"
 import { WS_BASE_URL } from "@/config"
 
 // Types
@@ -32,6 +32,7 @@ export default function App() {
   const [session, setSession] = useState<UserSession | null>(null)
   const [activeTab, setActiveTab] = useState("dashboard")
   const [alerts, setAlerts] = useState<AlertMessage[]>([])
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   // Load session from localStorage on start
   useEffect(() => {
@@ -111,10 +112,18 @@ export default function App() {
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#F0F4F8] text-slate-800 font-sans antialiased">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F0F4F8] text-slate-800 font-sans antialiased relative">
+      
+      {/* Sidebar Backdrop Overlay for Mobile/Tablet */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-xs md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       
       {/* 1. LEFT SIDEBAR NAVIGATION */}
-      <aside className="w-[260px] bg-white border-r border-blue-100 flex flex-col justify-between select-none">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-[260px] bg-white border-r border-blue-100 flex flex-col justify-between select-none transition-transform duration-300 transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:static md:flex`}>
         
         {/* Top Branding Section */}
         <div>
@@ -141,7 +150,10 @@ export default function App() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setIsSidebarOpen(false) // Auto-close sidebar on click in mobile view
+                  }}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     activeTab === tab.id
                       ? "bg-blue-900 text-white shadow-sm"
@@ -183,8 +195,29 @@ export default function App() {
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col overflow-hidden">
         
+        {/* Mobile Top Navigation Header */}
+        <header className="h-16 bg-white border-b border-blue-100 flex items-center justify-between px-4 md:hidden select-none shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600 focus:outline-none transition-colors"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 bg-blue-900 text-white rounded-lg flex items-center justify-center shadow-sm">
+                <Shield className="h-4.5 w-4.5" />
+              </div>
+              <span className="text-xs font-bold tracking-tight text-slate-900 uppercase">KSP-CrimePilot</span>
+            </div>
+          </div>
+          <span className="text-[9px] font-black text-slate-405 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-wider">
+            {activeTab}
+          </span>
+        </header>
+        
         {/* Dynamic Workspace Container */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           {activeTab === "dashboard" && <Dashboard />}
           {activeTab === "copilot" && <Copilot />}
           {activeTab === "mapper" && <Mapper />}

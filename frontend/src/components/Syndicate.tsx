@@ -239,7 +239,7 @@ export default function Syndicate() {
     <div className="flex flex-col md:flex-row h-[calc(100vh-100px)] w-full gap-6 select-none font-sans overflow-hidden">
       
       {/* Left panel: Directory & Node Inspector */}
-      <div className="w-full md:w-[360px] flex flex-col gap-4 overflow-y-auto">
+      <div className="w-full md:w-[360px] h-[300px] md:h-full shrink-0 flex flex-col gap-4 overflow-y-auto">
         
         {/* Search & Mode select */}
         <Card className="border border-blue-100 bg-white shadow-sm rounded-xl">
@@ -353,7 +353,7 @@ export default function Syndicate() {
       </div>
 
       {/* Right panel: Dynamic Visualization Workspace */}
-      <div className="flex-1 border border-blue-100 rounded-xl overflow-hidden shadow-sm bg-slate-950 relative flex flex-col">
+      <div className="flex-1 border border-blue-100 rounded-xl overflow-hidden shadow-sm bg-slate-950 relative flex flex-col min-h-[350px] md:min-h-0">
         
         {/* Helper Top Bar */}
         <div className="absolute top-4 left-4 bg-slate-900/90 border border-blue-850 px-3 py-1.5 rounded-lg z-10 text-[9px] font-semibold text-slate-400 flex items-center gap-1.5 select-none shadow-md backdrop-blur-sm pointer-events-none">

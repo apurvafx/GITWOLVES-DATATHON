@@ -371,7 +371,7 @@ export default function Copilot() {
     <div className="flex h-[calc(100vh-100px)] w-full gap-6 select-none font-sans overflow-hidden">
       
       {/* LEFT COLUMN: CHAT INQUIRY HISTORY SIDEBAR */}
-      <div className="w-64 border border-blue-100 rounded-xl flex flex-col p-4 bg-white shrink-0 overflow-y-auto shadow-sm">
+      <div className="hidden md:flex w-64 border border-blue-100 rounded-xl flex-col p-4 bg-white shrink-0 overflow-y-auto shadow-sm">
         <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 border-b border-blue-50 pb-2 flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5" />
           Case History

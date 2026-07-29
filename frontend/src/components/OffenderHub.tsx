@@ -206,7 +206,7 @@ export default function OffenderHub() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-[calc(100vh-100px)] w-full gap-6 select-none font-sans overflow-hidden">
+    <div className="flex flex-col md:flex-row h-auto md:h-[calc(100vh-100px)] w-full gap-6 select-none font-sans overflow-y-auto md:overflow-hidden">
       
       {/* 1. LEFT COLUMN: SEARCH & OFFENDERS LIST */}
       <div className="w-full md:w-[320px] flex flex-col gap-4 overflow-y-auto">
@@ -236,7 +236,7 @@ export default function OffenderHub() {
         </Card>
 
         {/* Directory List Card */}
-        <Card className="border border-blue-100 bg-white shadow-sm rounded-xl flex-1 flex flex-col overflow-hidden">
+        <Card className="border border-blue-100 bg-white shadow-sm rounded-xl h-[250px] md:h-auto md:flex-1 flex flex-col overflow-hidden">
           <CardContent className="p-2 flex-1 overflow-y-auto space-y-1">
             {filteredOffenders.map((o, idx) => (
               <div

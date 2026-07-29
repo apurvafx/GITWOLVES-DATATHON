@@ -28,6 +28,9 @@ backend/*
 !backend/database/init_db.py
 !backend/evaluation/
 !backend/evaluation/**
+!backend/frontend/
+!backend/frontend/dist/
+!backend/frontend/dist/**
 
 # Ensure database and env files remain ignored
 backend/database/ksp_crime.db
