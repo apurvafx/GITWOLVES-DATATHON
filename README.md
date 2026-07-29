@@ -1,270 +1,336 @@
-# Karnataka State Police CrimePilot Command Hub
+<div align="center">
 
-The Karnataka State Police (KSP) CrimePilot Command Hub is a web-based portal developed for the State Crime Record Bureau (SCRB). The system provides state investigators, analysts, and policymakers with real-time geospatial crime mapping, 3D syndicate correlation graphs, interactive AI copilot querying, and offender risk analysis.
+# KSP CrimePilot — Command Hub
 
-The platform is designed to run securely locally and is engineered for production deployment on the Zoho Catalyst cloud ecosystem.
+**A state-level intelligence platform for the Karnataka State Police SCRB**
+
+Real-time geospatial crime mapping, 3D syndicate correlation graphs,
+AI-powered investigator queries, and offender threat analytics — unified under one secure command interface.
+
+<br/>
+
+[![Live Deployment](https://img.shields.io/badge/Live%20Deployment-AppSail-F04A24?style=for-the-badge&logo=zoho&logoColor=white)](https://ksp-crimepilot-50044361086.development.catalystappsail.in)
+![Status](https://img.shields.io/badge/Status-Active-22c55e?style=for-the-badge)
+![License](https://img.shields.io/badge/License-Restricted-0f172a?style=for-the-badge)
+
+</div>
 
 ---
 
-## Technical Stack
+## Table of Contents
 
-The application is built using a modern, decoupled web architecture:
+- [Overview](#overview)
+- [Technology Stack](#technology-stack)
+- [Platform Modules](#platform-modules)
+- [System Architecture](#system-architecture)
+- [Security Architecture](#security-architecture)
+- [Screen Captures](#screen-captures)
+- [Local Development](#local-development)
+- [Production Deployment](#production-deployment)
+- [Security Implementation](#security-implementation)
+
+---
+
+## Overview
+
+The KSP CrimePilot Command Hub is a web-based intelligence portal built for the **State Crime Record Bureau (SCRB)** of Karnataka. It consolidates fragmented investigative workflows into a single secure, role-gated interface accessible to Investigators, Station House Officers, and District Superintendents.
+
+The platform is engineered on a decoupled architecture — a React 19 TypeScript frontend served as a static bundle through a hardened FastAPI Python backend, deployed to the Zoho Catalyst AppSail serverless runtime.
+
+| Attribute         | Detail                                              |
+|-------------------|-----------------------------------------------------|
+| Target Users      | KSP Investigators, SHOs, District SPs, Analysts    |
+| Authentication    | JWT Bearer tokens with PBKDF2-SHA256 hashed credentials |
+| Database          | SQLite (read-only AI access mode)                  |
+| Deployment Target | Zoho Catalyst AppSail — Python Serverless           |
+| Responsiveness    | Fully responsive across mobile, tablet, and desktop |
+
+---
+
+## Technology Stack
 
 ### Frontend
-- **Framework**: React 19 (TypeScript) with Vite Build Engine
-  - Badge: ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-- **Styling**: Tailwind CSS
-  - Badge: ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-- **3D Visualization**: React Three Fiber (Three.js Wrapper)
-  - Badge: ![Three.js](https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)
-- **Geospatial Mapping**: React Leaflet (OpenStreetMap API)
-  - Badge: ![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
-- **Icons**: Lucide React
-  - Badge: ![Lucide](https://img.shields.io/badge/Lucide-000000?style=for-the-badge&logo=lucide&logoColor=white)
+
+| Technology | Role |
+|---|---|
+| ![React](https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB) | UI framework with TypeScript |
+| ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) | Build engine and dev server |
+| ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) | Utility-first styling system |
+| ![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=three.js&logoColor=white) | WebGL 3D visualization via React Three Fiber |
+| ![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=flat-square&logo=leaflet&logoColor=white) | Geospatial tile rendering via React Leaflet |
+| ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) | Static typing across the full frontend |
+| ![Lucide](https://img.shields.io/badge/Lucide_Icons-000000?style=flat-square&logo=lucide&logoColor=white) | Icon library |
 
 ### Backend
-- **Framework**: FastAPI (Python 3.10+)
-  - Badge: ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi&logoColor=white)
-- **Environment**: Python
-  - Badge: ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-- **Data Validation**: Pydantic
-  - Badge: ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=for-the-badge&logo=pydantic&logoColor=white)
-- **Cryptography**: Passlib (PBKDF2-SHA256 Hashing)
-  - Badge: ![Cryptography](https://img.shields.io/badge/Cryptography-4B275F?style=for-the-badge&logo=openssl&logoColor=white)
 
-### Database and Infrastructure
-- **Database**: SQLite (Relational Data Store)
-  - Badge: ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
-- **Hosting**: Zoho Catalyst AppSail (Serverless Python Node Environment)
-  - Badge: ![Zoho Catalyst](https://img.shields.io/badge/Zoho_Catalyst-F04A24?style=for-the-badge&logo=zoho&logoColor=white)
+| Technology | Role |
+|---|---|
+| ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat-square&logo=fastapi&logoColor=white) | High-performance async REST API framework |
+| ![Python](https://img.shields.io/badge/Python_3.10+-3776AB?style=flat-square&logo=python&logoColor=white) | Server-side runtime |
+| ![Pydantic](https://img.shields.io/badge/Pydantic-E92063?style=flat-square&logo=pydantic&logoColor=white) | Request payload validation and schema enforcement |
+| ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=flat-square&logo=sqlite&logoColor=white) | Embedded relational database |
+| ![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white) | Session tokens for role-based access control |
+| ![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=flat-square&logo=google&logoColor=white) | LLM for natural language to SQL translation |
+
+### Infrastructure
+
+| Technology | Role |
+|---|---|
+| ![Zoho Catalyst](https://img.shields.io/badge/Zoho_Catalyst-F04A24?style=flat-square&logo=zoho&logoColor=white) | AppSail serverless Python hosting |
+| ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white) | Source control and CI/CD pipeline |
 
 ---
 
-## Core Features
+## Platform Modules
 
-1. **Analytical Command Dashboard**: Aggregates state-wide statistics, live incident timelines, and crime head distributions. Supports generating and exporting formal FIR dossier PDF sheets.
-2. **Crime Mapper (GIS)**: Renders coordinates using Leaflet tiles, highlighting active spatiotemporal hotspot buffers and clusters based on customizable category filters.
-3. **Syndicate Link (3D Node Graph)**: Renders interactive WebGL-based relationship systems mapping transactions, communication connections, and accomplice hierarchies between criminal offenders and bank nodes.
-4. **Investigator Copilot**: A secure Retrieval-Augmented Generation (RAG) assistant allowing officers to submit natural language inquiries in both English and Kannada to extract database entities.
-5. **Offender Hub**: Tracks historical case records, heinous offense volumes, and computes dynamic threat/recidivism scores.
+| Module | Description | Access Level |
+|---|---|---|
+| **Command Hub Dashboard** | Real-time statistics, FIR timelines, district crime distribution, case registration, and PDF export | Investigator, SHO, SP |
+| **Investigator AI Copilot** | RAG-powered natural language query engine supporting English and Kannada inputs | All roles |
+| **Spatiotemporal Crime Mapper** | Leaflet-based GIS interface with hotspot radius buffers, category filters, and year slider | All roles |
+| **Syndicate Link Graph** | Interactive 3D WebGL node network visualizing offender-account-crime relationships | SHO, SP only |
+| **Offender Hub** | Threat scoring engine with recidivism risk analysis and accomplice linkage tracking | All roles |
 
 ---
 
 ## System Architecture
 
-The following diagram illustrates the decoupled tier structure, detailing how the React frontend interacts with the FastAPI backend endpoints, safety layers, and database.
-
 ```mermaid
-graph TD
-    subgraph Client ["Client Tier (React Frontend)"]
-        UI["Main UI Shell (App.tsx)"]
-        Dash["Analytical Dashboard (Dashboard.tsx)"]
-        MapC["GIS Hotspot Mapper (Mapper.tsx)"]
-        Syn["3D Link Graph (Syndicate.tsx)"]
-        Cop["Investigator Copilot (Copilot.tsx)"]
-        Off["Offender Directory (OffenderHub.tsx)"]
+graph LR
+    subgraph Browser["Client — React 19 TypeScript"]
+        Shell["App Shell + Sidebar Navigation"]
+        Dashboard["Command Hub Dashboard"]
+        Copilot["Investigator AI Copilot"]
+        Mapper["Spatiotemporal Crime Mapper"]
+        Syndicate["Syndicate Link 3D Graph"]
+        Offender["Offender Hub"]
     end
 
-    subgraph API ["Application Tier (FastAPI Backend)"]
+    subgraph Backend["FastAPI Python Backend"]
         RL["Rate Limiter Middleware"]
-        AuthRoute["Auth Handler (/api/auth)"]
-        CaseRoute["Case Manager (/api/cases)"]
-        ChatRoute["AI Copilot RAG (/api/chat)"]
-        WSRoute["Live Dispatch Socket (/ws/alerts)"]
-        SQLScan["SQL Safety Validator"]
+        Auth["/api/auth — JWT Issuer"]
+        Cases["/api/cases — Case Manager"]
+        Chat["/api/chat — RAG Copilot"]
+        WS["/ws/alerts — Live Dispatch"]
+        Safety["SQL Safety Validator"]
     end
 
-    subgraph Data ["Data Tier"]
-        DB["SQLite Database (ksp_crime.db)"]
-        Env["Environment Configuration (.env)"]
+    subgraph Data["Data Layer"]
+        DB[("ksp_crime.db — SQLite")]
+        Env[".env — Secrets Store"]
+        Gemini["Google Gemini LLM API"]
     end
 
-    UI --> Dash
-    UI --> MapC
-    UI --> Syn
-    UI --> Cop
-    UI --> Off
+    Shell --> Auth
+    Shell -.->|WebSocket| WS
+    Dashboard --> Cases
+    Copilot --> Chat
+    Mapper --> Cases
+    Syndicate --> Cases
+    Offender --> Cases
 
-    Dash --> CaseRoute
-    MapC --> CaseRoute
-    Syn --> CaseRoute
-    Cop --> ChatRoute
-    Off --> CaseRoute
-    UI --> AuthRoute
-    UI -.-> WSRoute
+    RL --> Auth
+    RL --> Cases
+    RL --> Chat
 
-    AuthRoute --> Env
-    AuthRoute --> DB
-    CaseRoute --> DB
-    ChatRoute --> SQLScan
-    SQLScan --> DB
+    Auth --> Env
+    Auth --> DB
+    Cases --> DB
+    Chat --> Safety
+    Safety --> DB
+    Chat --> Gemini
 ```
 
 ---
 
-## Logical Data Flows
+## Security Architecture
 
-### 1. User Authentication and Session Management
-
-This flowchart maps the security sequence executed when an officer logs into the portal:
+### Authentication Flow
 
 ```mermaid
 graph TD
-    Start["User Login Request"] --> RateLimit{"Rate Limiter Check (IP)"}
-    RateLimit -- "Attempts > 5 per 15 min" --> Error429["Return HTTP 429 Too Many Requests"]
-    RateLimit -- "Attempts <= 5" --> Validate{"Pydantic Payload Validation"}
-    Validate -- "Malformed/Oversized" --> Error422["Return HTTP 422 Unprocessable Entity"]
-    Validate -- "Valid Format" --> CheckCreds{"Hashed Password Matching"}
-    CheckCreds -- "Incorrect Credentials" --> Error401["Return HTTP 401 Unauthorized"]
-    CheckCreds -- "Authorized" --> TokenGen["JWT Access Token Generation"]
-    TokenGen --> Response["Return JWT Token & User Metadata"]
+    A["POST /api/auth/login"] --> B{"Rate Limiter\n5 attempts / 15 min per IP"}
+    B -- "Limit Exceeded" --> C["HTTP 429 — Retry-After header"]
+    B -- "Within Limit" --> D{"Pydantic Schema Validation\nmax 50 chars, alphanumeric only"}
+    D -- "Malformed Payload" --> E["HTTP 422 — Unprocessable Entity"]
+    D -- "Valid Payload" --> F{"PBKDF2-SHA256\nPassword Verification"}
+    F -- "No Match" --> G["HTTP 401 — Unauthorized"]
+    F -- "Verified" --> H["Sign JWT Token — HS256"]
+    H --> I["HTTP 200 — Token + Role Metadata"]
 ```
 
-### 2. Copilot Query RAG Execution and SQL Safety Checks
-
-This flowchart illustrates the safety validation pipeline applied to natural language prompts translating to SQL statements:
+### AI Copilot Safety Pipeline
 
 ```mermaid
 graph TD
-    Prompt["Officer Submits Chat Query"] --> PydanticChat{"Pydantic Schema Check"}
-    PydanticChat -- "Invalid" --> ChatErr422["Return HTTP 422 Validation Error"]
-    PydanticChat -- "Valid" --> LLMGen{"Initial SQL Query Formulation"}
-    LLMGen --> SQLCheck{"SQL Safety Check (is_sql_query_safe)"}
-    SQLCheck -- "Matches Forbidden Keywords (e.g., DROP, INSERT, sqlite_master)" --> Blocked["Reject Query & Return Safety Notice"]
-    SQLCheck -- "Valid SELECT Query" --> ReadDB{"Execute Query on SQLite (Read-Only Mode)"}
-    ReadDB --> Compile["Assemble Data Context"]
-    Compile --> ResponseGen["Formulate Natural Language Explanation"]
-    ResponseGen --> Output["Display Response to Investigator"]
+    A["Officer Submits Natural Language Query"] --> B{"Pydantic Validation\nmax 500 chars"}
+    B -- "Invalid" --> C["HTTP 422 — Rejected"]
+    B -- "Valid" --> D["Google Gemini LLM\nNatural Language to SQL"]
+    D --> E{"SQL Safety Scan\nis_sql_query_safe"}
+    E -- "Forbidden: DROP / INSERT /\nUPDATE / sqlite_master / PRAGMA" --> F["Query Blocked — Safety Notice Returned"]
+    E -- "Clean SELECT Statement" --> G["SQLite Read-Only Connection\nmode=ro URI"]
+    G --> H["Results Compiled"]
+    H --> I["Gemini Formats Natural Language Response"]
+    I --> J["Response Displayed to Investigator"]
 ```
 
 ---
 
 ## Screen Captures
 
-Below are visual captures of the application pages located inside the repository:
+### Landing Page
 
-### 1. Landing Page
-Platform entry point showing features and information panels for officers.
-![Landing Page Screen 1](assets/Screenshot%202026-07-26%20183909.png)
-![Landing Page Screen 2](assets/Screenshot%202026-07-26%20183943.png)
+<table>
+  <tr>
+    <td><img src="assets/Screenshot 2026-07-26 184033.png" alt="Landing Page View 1"/></td>
+    <td><img src="assets/Screenshot 2026-07-26 184042.png" alt="Landing Page View 2"/></td>
+  </tr>
+</table>
 
-### 2. Command Hub Dashboard
-Analytical overview displaying real-time metrics, recent cases list, and registration actions.
+---
+
+### Command Hub Dashboard
+
+The central analytics workspace. Displays total registered FIRs, active investigation counts, resolution rates, and tracked financial trails. Officers with Investigator or SHO clearance can register new cases and export official FIR PDFs directly from this panel.
+
 ![Command Hub Dashboard](assets/Screenshot%202026-07-26%20183955.png)
 
-### 3. Investigator AI Copilot
-Natural language inquiry interface accepting structured database queries.
+---
+
+### Investigator AI Copilot
+
+A Retrieval-Augmented Generation interface backed by the Google Gemini LLM. Accepts queries in both English and Kannada, translates them to parameterized SQL, runs them against a read-only database connection, and returns structured natural language responses. All generated queries pass through the `is_sql_query_safe` validator before execution.
+
 ![Investigator AI Copilot](assets/Screenshot%202026-07-26%20184013.png)
 
-### 4. GIS Spatiotemporal Crime Mapper
-Geospatial interactive mapping workspace displaying cluster groups and heat zones.
-![GIS Spatiotemporal Crime Mapper](assets/Screenshot%202026-07-26%20184024.png)
+---
 
-### 5. Syndicate Link (3D Relationship Graph)
-WebGL space modeling connected criminal accomplices, transaction edges, and financial channels.
-![Syndicate Link Graph](assets/Screenshot%202026-07-26%20184033.png)
+### Spatiotemporal Crime Mapper
 
-### 6. Offender Hub
-Dynamic profile pages tracking recidivism risk levels, linked cases, and threat indicators.
-![Offender Hub Profile](assets/Screenshot%202026-07-26%20184042.png)
+An interactive Leaflet.js map rendering all case coordinates as classified markers. Supports district and crime category filtering, a temporal year-range slider, and toggleable hotspot radius buffers that visually surface high-density crime clusters.
+
+![Spatiotemporal Crime Mapper](assets/Screenshot%202026-07-26%20184024.png)
 
 ---
 
-## Setup and Local Development Guide
+### Syndicate Link — 3D Relationship Graph
+
+A Three.js WebGL canvas rendering the full criminal network as an interactive node graph. Nodes represent accused persons, bank accounts, and case entities. Edges map transaction trails and accomplice relationships. Officers can orbit, zoom, and click-select individual nodes to inspect their profile and connections. Access is restricted to SHO clearance and above.
+
+![Syndicate Link 3D Graph](assets/Screenshot%202026-07-26%20183909.png)
+
+---
+
+### Offender Hub
+
+A searchable directory of all tracked offenders with dynamically computed threat scores, recidivism risk classifications (Moderate / High / Critical), heinous offense counts, and accomplice linkage statistics. Selecting an offender renders their full threat profile alongside historical case participation charts.
+
+![Offender Hub](assets/Screenshot%202026-07-26%20183943.png)
+
+---
+
+## Local Development
 
 ### Prerequisites
-- Python 3.10+
-- Node.js (version 18 or higher)
-- npm or yarn package manager
 
-### 1. Backend Service Configuration
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-2. Create a virtual environment and activate it:
-   ```bash
-   python -m venv venv
-   # On Windows:
-   venv\Scripts\activate
-   # On macOS/Linux:
-   source venv/bin/activate
-   ```
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Create your local environmental configuration file:
-   ```bash
-   cp .env.example .env
-   ```
-5. Edit `.env` to supply your private configurations (such as your `GEMINI_API_KEY`).
-6. Start the FastAPI server:
-   ```bash
-   uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-   ```
+- Python 3.10 or higher
+- Node.js 18 or higher
+- npm
 
-### 2. Frontend Development Server
-1. Open a new terminal and navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-2. Install npm dependencies:
-   ```bash
-   npm install
-   ```
-3. Launch the local development dev server:
-   ```bash
-   npm run dev
-   ```
-4. Open your browser and navigate to the local address displayed in the terminal output (typically `http://localhost:5173`).
+### Backend
 
----
+```bash
+# Navigate to the backend directory
+cd backend
 
-## Deployment Guide (Zoho Catalyst AppSail)
+# Create and activate a virtual environment
+python -m venv venv
 
-The application is structured to be packaged and deployed directly to Zoho Catalyst AppSail.
+# Windows
+venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
 
-### Preparation and Build
-Before triggering deployment, the frontend source files must be compiled and embedded inside the backend server structure so they can be hosted statically by the FastAPI production node:
+# Install dependencies
+pip install -r requirements.txt
 
-1. Navigate to the frontend workspace:
-   ```bash
-   cd frontend
-   ```
-2. Build the optimized production bundle:
-   ```bash
-   npm run build
-   ```
-3. Copy the compiled assets from `frontend/dist/` into the `backend/frontend/dist/` folder:
-   ```bash
-   # On Windows (PowerShell):
-   Copy-Item -Path "dist/*" -Destination "../backend/frontend/dist" -Recurse -Force
-   
-   # On macOS/Linux:
-   cp -r dist/* ../backend/frontend/dist/
-   ```
+# Configure environment variables
+cp .env.example .env
+# Open .env and add your GEMINI_API_KEY and JWT_SECRET_KEY
 
-### Deploying via CLI
-1. Ensure the Zoho Catalyst CLI is installed globally:
-   ```bash
-   npm install -g zcatalyst-cli
-   ```
-2. Authenticate the CLI with your Zoho account:
-   ```bash
-   catalyst login
-   ```
-3. Run the deployment command from the project root workspace directory, passing your active Project ID:
-   ```bash
-   catalyst deploy -p 48893000000013024
-   ```
-4. Once completed successfully, the CLI will output your live public AppSail URL.
+# Start the development server
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+### Frontend
+
+```bash
+# In a separate terminal, navigate to the frontend directory
+cd frontend
+
+# Install npm dependencies
+npm install
+
+# Start the Vite development server
+npm run dev
+
+# Open http://localhost:5173 in your browser
+```
+
+### Environment Variables Reference
+
+| Variable | Description | Required |
+|---|---|---|
+| `GEMINI_API_KEY` | Google Gemini API key for the AI Copilot | Yes |
+| `JWT_SECRET_KEY` | Secret key for signing JWT access tokens | Yes |
+| `ADMIN_PASSWORD` | Hashed password for admin-level accounts | Yes |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed frontend origins | Yes |
 
 ---
 
-## Production Security Measures
+## Production Deployment
 
-- **Rate Limiting**: Integrated middleware tracks client IPs to enforce a maximum of 5 auth attempts per 15 minutes on `/api/auth/login` and 100 requests per minute elsewhere.
-- **SQL Sanitization**: Intercepts generated prompts to block schema extraction keywords, forcing read-only SQLite executions.
-- **Payload Boundaries**: All route payloads are validated via Pydantic model limits, and strings are HTML-escaped to protect against Cross-Site Scripting (XSS).
-- **Credential Hashing**: User passwords are encrypted on application start using PBKDF2-SHA256 contexts, preventing plaintext matching in memory.
+### Build and Sync
+
+```bash
+# Step 1 — Build the production bundle
+cd frontend
+npm run build
+
+# Step 2 — Copy compiled assets into the backend static serving directory
+# Windows (PowerShell)
+Copy-Item -Path "dist/*" -Destination "../backend/frontend/dist" -Recurse -Force
+
+# macOS / Linux
+cp -r dist/* ../backend/frontend/dist/
+```
+
+### Deploy to Zoho Catalyst AppSail
+
+```bash
+# Install the Catalyst CLI globally if not already installed
+npm install -g zcatalyst-cli
+
+# Authenticate with your Zoho account
+catalyst login
+
+# Deploy to your project (replace with your Project ID)
+catalyst deploy -p 48893000000013024
+```
+
+The CLI will output your live AppSail URL upon successful deployment.
+
+---
+
+## Security Implementation
+
+| Layer | Mechanism | Detail |
+|---|---|---|
+| **Rate Limiting** | Custom Starlette middleware | Max 5 auth attempts per 15 minutes per IP; 100 requests per minute on all other routes |
+| **Input Validation** | Pydantic v2 schema models | Max field lengths, alphanumeric character constraints, HTML escape on all string inputs |
+| **Password Security** | PBKDF2-SHA256 via Passlib | Passwords hashed on server startup; never compared in plaintext |
+| **SQL Injection** | `is_sql_query_safe` validator | Blocks DROP, INSERT, UPDATE, DELETE, PRAGMA, sqlite_master, and nested statements |
+| **Database Access** | Read-only URI mode | AI-generated queries execute against `mode=ro` SQLite connections only |
+| **Session Tokens** | JWT HS256 signed tokens | Role embedded in payload; verified on every protected route |
+| **XSS Protection** | `html.escape()` on all inputs | Applied server-side before any string is persisted or reflected |
+| **Secret Management** | `.env` file excluded from Git | Credentials never committed; `.env.example` provided as a safe template |
