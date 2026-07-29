@@ -145,28 +145,28 @@ Below are visual captures of the application pages located inside the repository
 
 ### 1. Landing Page
 Platform entry point showing features and information panels for officers.
-![Landing Page Screen 1](assets/Screenshot%202026-07-26%20184033.png)
-![Landing Page Screen 2](assets/Screenshot%202026-07-26%20184042.png)
+![Landing Page Screen 1](assets/Screenshot%202026-07-26%20183909.png)
+![Landing Page Screen 2](assets/Screenshot%202026-07-26%20183943.png)
 
-### 2. Officer Authentication and Sign In
-Secure authentication screen for official investigator accounts.
-![Officer Authentication Page](assets/Screenshot%202026-07-26%20183909.png)
-
-### 3. Command Hub Dashboard
+### 2. Command Hub Dashboard
 Analytical overview displaying real-time metrics, recent cases list, and registration actions.
-![Command Hub Dashboard](assets/Screenshot%202026-07-26%20183943.png)
+![Command Hub Dashboard](assets/Screenshot%202026-07-26%20183955.png)
 
-### 4. Investigator AI Copilot
+### 3. Investigator AI Copilot
 Natural language inquiry interface accepting structured database queries.
-![Investigator AI Copilot](assets/Screenshot%202026-07-26%20183955.png)
+![Investigator AI Copilot](assets/Screenshot%202026-07-26%20184013.png)
 
-### 5. GIS Spatiotemporal Crime Mapper
+### 4. GIS Spatiotemporal Crime Mapper
 Geospatial interactive mapping workspace displaying cluster groups and heat zones.
-![GIS Spatiotemporal Crime Mapper](assets/Screenshot%202026-07-26%20184013.png)
+![GIS Spatiotemporal Crime Mapper](assets/Screenshot%202026-07-26%20184024.png)
 
-### 6. Syndicate Link and Offender Hub
-Crime correlation workspace mapping connected criminal accomplices and threat levels.
-![Syndicate Link and Offender Hub](assets/Screenshot%202026-07-26%20184024.png)
+### 5. Syndicate Link (3D Relationship Graph)
+WebGL space modeling connected criminal accomplices, transaction edges, and financial channels.
+![Syndicate Link Graph](assets/Screenshot%202026-07-26%20184033.png)
+
+### 6. Offender Hub
+Dynamic profile pages tracking recidivism risk levels, linked cases, and threat indicators.
+![Offender Hub Profile](assets/Screenshot%202026-07-26%20184042.png)
 
 ---
 
