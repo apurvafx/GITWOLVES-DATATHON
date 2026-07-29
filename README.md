@@ -182,8 +182,8 @@ graph TD
 
 <table>
   <tr>
-    <td><img src="assets/Screenshot 2026-07-26 184033.png" alt="Landing Page View 1"/></td>
-    <td><img src="assets/Screenshot 2026-07-26 184042.png" alt="Landing Page View 2"/></td>
+    <td><img src="assets/landing page.png" alt="Landing Page View 1"/></td>
+    <td><img src="assets/landing page 2.png" alt="Landing Page View 2"/></td>
   </tr>
 </table>
 
@@ -193,7 +193,7 @@ graph TD
 
 The central analytics workspace. Displays total registered FIRs, active investigation counts, resolution rates, and tracked financial trails. Officers with Investigator or SHO clearance can register new cases and export official FIR PDFs directly from this panel.
 
-![Command Hub Dashboard](assets/Screenshot%202026-07-26%20183955.png)
+![Command Hub Dashboard](assets/dashboard.png)
 
 ---
 
@@ -201,7 +201,7 @@ The central analytics workspace. Displays total registered FIRs, active investig
 
 A Retrieval-Augmented Generation interface backed by the Google Gemini LLM. Accepts queries in both English and Kannada, translates them to parameterized SQL, runs them against a read-only database connection, and returns structured natural language responses. All generated queries pass through the `is_sql_query_safe` validator before execution.
 
-![Investigator AI Copilot](assets/Screenshot%202026-07-26%20184013.png)
+![Investigator AI Copilot](assets/copilot.png)
 
 ---
 
@@ -209,7 +209,7 @@ A Retrieval-Augmented Generation interface backed by the Google Gemini LLM. Acce
 
 An interactive Leaflet.js map rendering all case coordinates as classified markers. Supports district and crime category filtering, a temporal year-range slider, and toggleable hotspot radius buffers that visually surface high-density crime clusters.
 
-![Spatiotemporal Crime Mapper](assets/Screenshot%202026-07-26%20184024.png)
+![Spatiotemporal Crime Mapper](assets/map.png)
 
 ---
 
@@ -217,7 +217,7 @@ An interactive Leaflet.js map rendering all case coordinates as classified marke
 
 A Three.js WebGL canvas rendering the full criminal network as an interactive node graph. Nodes represent accused persons, bank accounts, and case entities. Edges map transaction trails and accomplice relationships. Officers can orbit, zoom, and click-select individual nodes to inspect their profile and connections. Access is restricted to SHO clearance and above.
 
-![Syndicate Link 3D Graph](assets/Screenshot%202026-07-26%20183909.png)
+![Syndicate Link 3D Graph](assets/syndicate link.png)
 
 ---
 
@@ -225,7 +225,7 @@ A Three.js WebGL canvas rendering the full criminal network as an interactive no
 
 A searchable directory of all tracked offenders with dynamically computed threat scores, recidivism risk classifications (Moderate / High / Critical), heinous offense counts, and accomplice linkage statistics. Selecting an offender renders their full threat profile alongside historical case participation charts.
 
-![Offender Hub](assets/Screenshot%202026-07-26%20183943.png)
+![Offender Hub](assets/offender hub.png)
 
 ---
 
